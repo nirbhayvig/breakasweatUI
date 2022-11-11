@@ -3,23 +3,20 @@ package com.example.breakasweatui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.breakasweatui.ui.theme.BreakaSweatUITheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.material3.Icon
 
 
 class MainActivity : ComponentActivity() {
@@ -27,35 +24,66 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BreakaSweatUITheme {
-                main(modifier = Modifier.fillMaxSize())
+                Main(modifier = Modifier.fillMaxSize())
             }
         }
     }
 }
 @Composable
-fun main(
+fun Main(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "welcome"
+    startDestination: String = "Home"
 ) {
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination
     ) {
-        composable("welcome") {
-            WelcomeScreen(
-                navNext = { navController.navigate("BeginningWorkout") })
+        composable("Home") {
+            HomeScreen(
+                navNext = { navController.navigate("BeginningWorkout") },
+                navHistory = {navController.navigate("WorkoutHistory")},
+                navModify = { navController.navigate("ModifyRoutine")},
+                navSettings = { navController.navigate("Settings") }
+                )
         }
-        composable("beginningWorkout") {
+        composable("BeginningWorkout") {
             BeginningWorkout(
-                navNext = { navController.navigate("duringWorkout") },
-                navPrev = { navController.navigate("welcome") })
+                navNext = { navController.navigate("DuringWorkout") },
+                navPrev = { navController.navigate("Home") })
         }
-        composable("duringWorkout") {
+        composable("DuringWorkout") {
             DuringWorkout(
-                navNext = { /*TODO*/ },
-                navPrev = { navController.navigate("beginningWorkout")})
+                navNext = { navController.navigate("Resting")},
+                navPrev = { navController.navigate("BeginningWorkout")})
+        }
+        composable("WorkoutHistory") {
+            WorkoutHistory(
+                navHome = {navController.navigate("Home")}
+            )
+        }
+        composable("ModifyRoutine") {
+            ModifyRoutine(
+                navHome = {navController.navigate("Home")}
+            )
+        }
+        composable("Resting") {
+            Resting(
+                navNext = { navController.navigate("CompletedWorkout") },
+                navPrev = { navController.navigate("DuringWorkout") }
+            )
+        }
+        composable("CompletedWorkout") {
+            Completed(
+                navHome = { navController.navigate("Home") },
+                navHistory = { navController.navigate("WorkoutHistory") }
+            )
+        }
+        composable("Settings") {
+            Settings(
+                navHome = { navController.navigate("Home") }
+            )
         }
     }
 }
@@ -63,22 +91,39 @@ fun main(
 
 
 @Composable
-fun WelcomeScreen(
+fun HomeScreen(
     navNext: () -> Unit,
+    navHistory: () -> Unit,
+    navModify: () -> Unit,
+    navSettings: () -> Unit,
     modifier: Modifier = Modifier) {
     // TODO: This state should be hoisted
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        IconButton( modifier = Modifier.padding(vertical = 4.dp),onClick = navSettings) {
+            Icon(Icons.Filled.Settings, contentDescription = "Settings")
+        }
 
+    }
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Welcome to Break a Sweat!")
-        Button(
-            modifier = Modifier.padding(vertical = 24.dp),
-            onClick = navNext
-        ) {
-            Text("Begin Workout")
+        Text(text = "Welcome to Break a Sweat!", modifier = Modifier.padding(bottom = 24.dp))
+
+        ElevatedButton(modifier = Modifier.padding(vertical = 12.dp), onClick = navNext) {
+            Text("Start Workout")
+        }
+
+        ElevatedButton(modifier = Modifier.padding(vertical = 6.dp), onClick = navHistory) {
+            Text("Workout History")
+        }
+
+        ElevatedButton(modifier = Modifier.padding(vertical = 6.dp), onClick = navModify) {
+            Text("Edit Workouts")
         }
     }
 }
@@ -95,15 +140,15 @@ fun BeginningWorkout(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Begin Workout:")
-        Button(
-            onClick = navNext
-        ) {
+        Text("Exercises:")
+        Text("Exercise 1, 2, & 3")
+
+        ElevatedButton(onClick = navNext) {
             Text("Start")
         }
-        Button(
-            onClick = navPrev
-        ) {
-            Text(text = "Back")
+
+        ElevatedButton(onClick = navPrev) {
+            Text("Back")
         }
         
     }
@@ -121,23 +166,124 @@ fun DuringWorkout(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("DuringWorkout:")
-        Button(
-            onClick = navNext
-        ) {
-            Text("Start")
+        ElevatedButton(onClick = navNext) {
+            Text("Next")
         }
-        Button(
-            onClick = navPrev
-        ) {
-            Text(text = "Back")
+
+        ElevatedButton(onClick = navPrev) {
+            Text("Back")
         }
     }
 }
 
-@Preview(showBackground = true, widthDp = 320, heightDp = 320)
 @Composable
-fun WelcomePreview() {
-    BreakaSweatUITheme {
-        WelcomeScreen(navNext = {})
+fun Resting(
+    navNext: () -> Unit,
+    navPrev: () -> Unit,
+    modifier: Modifier = Modifier
+    ) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Resting:")
+        Text("Next up:")
+        Text("Exercise 3")
+
+        ElevatedButton(onClick = navNext) {
+            Text("Continue")
+        }
+
+        ElevatedButton(onClick = navPrev) {
+            Text("Back")
+        }
     }
 }
+
+@Composable
+fun Completed(
+    navHome: () -> Unit,
+    navHistory: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Workout Completed")
+        Text("Congrats! You completed a workout!")
+
+        ElevatedButton(onClick = navHome) {
+            Text("Home")
+        }
+
+        ElevatedButton(onClick = navHistory) {
+            Text("Workout History")
+        }
+    }
+}
+
+@Composable
+fun WorkoutHistory(
+    modifier: Modifier = Modifier,
+    navHome: () -> Unit
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+        Text("Workout History")
+
+        ElevatedButton(onClick = navHome) {
+            Text("Home")
+        }
+    }
+}
+
+@Composable
+fun ModifyRoutine(
+    modifier: Modifier = Modifier,
+    navHome: () -> Unit
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Edit Workout Routine")
+
+        ElevatedButton(onClick = navHome) {
+            Text("Home")
+        }
+    }
+}
+
+@Composable
+fun Settings(
+    modifier: Modifier = Modifier,
+    navHome: () -> Unit
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Settings:")
+
+        ElevatedButton(onClick = navHome) {
+            Text("Home")
+        }
+    }
+}
+
+//
+//@Preview(showBackground = true, widthDp = 320, heightDp = 320)
+//@Composable
+//fun WelcomePreview() {
+//    BreakaSweatUITheme {
+//        WelcomeScreen(navNext = {})
+//    }
+//}
