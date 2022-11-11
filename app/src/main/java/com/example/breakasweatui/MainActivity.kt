@@ -4,19 +4,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.breakasweatui.ui.theme.BreakaSweatUITheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 
 class MainActivity : ComponentActivity() {
@@ -30,22 +33,38 @@ class MainActivity : ComponentActivity() {
     }
 }
 @Composable
-fun main(modifier: Modifier = Modifier) {
-    
-    var shouldShowWelcome by remember { mutableStateOf(true) }
-    Surface(modifier) {
-        if (shouldShowWelcome) {
-            WelcomeScreen(onBeginClicked = {shouldShowWelcome = false})
-        } else {
-            BeginningWorkout()
+fun main(
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
+    startDestination: String = "welcome"
+) {
+    NavHost(
+        modifier = modifier,
+        navController = navController,
+        startDestination = startDestination
+    ) {
+        composable("welcome") {
+            WelcomeScreen(
+                navNext = { navController.navigate("BeginningWorkout") })
+        }
+        composable("beginningWorkout") {
+            BeginningWorkout(
+                navNext = { navController.navigate("duringWorkout") },
+                navPrev = { navController.navigate("welcome") })
+        }
+        composable("duringWorkout") {
+            DuringWorkout(
+                navNext = { /*TODO*/ },
+                navPrev = { navController.navigate("beginningWorkout")})
         }
     }
 }
 
 
+
 @Composable
 fun WelcomeScreen(
-    onBeginClicked: () -> Unit,
+    navNext: () -> Unit,
     modifier: Modifier = Modifier) {
     // TODO: This state should be hoisted
 
@@ -57,7 +76,7 @@ fun WelcomeScreen(
         Text("Welcome to Break a Sweat!")
         Button(
             modifier = Modifier.padding(vertical = 24.dp),
-            onClick = onBeginClicked
+            onClick = navNext
         ) {
             Text("Begin Workout")
         }
@@ -66,7 +85,10 @@ fun WelcomeScreen(
 
 @Composable
 fun BeginningWorkout(
-    modifier: Modifier = Modifier) {
+    navNext: () -> Unit,
+    navPrev: () -> Unit,
+    modifier: Modifier = Modifier
+    ) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -74,9 +96,40 @@ fun BeginningWorkout(
     ) {
         Text("Begin Workout:")
         Button(
-            onClick = {}
+            onClick = navNext
         ) {
             Text("Start")
+        }
+        Button(
+            onClick = navPrev
+        ) {
+            Text(text = "Back")
+        }
+        
+    }
+}
+
+@Composable
+fun DuringWorkout(
+    navNext: () -> Unit,
+    navPrev: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("DuringWorkout:")
+        Button(
+            onClick = navNext
+        ) {
+            Text("Start")
+        }
+        Button(
+            onClick = navPrev
+        ) {
+            Text(text = "Back")
         }
     }
 }
@@ -85,6 +138,6 @@ fun BeginningWorkout(
 @Composable
 fun WelcomePreview() {
     BreakaSweatUITheme {
-        WelcomeScreen(onBeginClicked = {})
+        WelcomeScreen(navNext = {})
     }
 }
