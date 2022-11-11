@@ -54,9 +54,9 @@ fun Drawer(
 fun NavBar(onButtonClicked: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
+        horizontalArrangement = Arrangement.Start
     ) {
-        IconButton( modifier = Modifier.padding(vertical = 4.dp), onClick = { TODO()}) {
+        IconButton( modifier = Modifier.padding(vertical = 4.dp), onClick = onButtonClicked ) {
             Icon(Icons.Filled.Menu, contentDescription = "Menu")
         }
     }

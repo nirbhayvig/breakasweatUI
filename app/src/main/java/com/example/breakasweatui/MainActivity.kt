@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.Modifier
 import com.example.breakasweatui.ui.theme.BreakaSweatUITheme
@@ -17,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.Icon
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -29,65 +31,98 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Main(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = "Home"
 ) {
-    NavHost(
-        modifier = modifier,
-        navController = navController,
-        startDestination = startDestination
-    ) {
-        composable("Home") {
-            HomeScreen(
-                navNext = { navController.navigate("BeginningWorkout") },
-                navHistory = {navController.navigate("WorkoutHistory")},
-                navModify = { navController.navigate("ModifyRoutine")},
-                navSettings = { navController.navigate("Settings") }
+    Surface(color = MaterialTheme.colorScheme.background) {
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
+        val openDrawer = {
+            scope.launch {
+                drawerState.open()
+            }
+        }
+        NavigationDrawer(
+            drawerState = drawerState,
+            gesturesEnabled = drawerState.isOpen,
+            drawerContent = {
+                Drawer(
+                    onDestinationClicked = { route ->
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate(route)
+                    }
                 )
-        }
-        composable("BeginningWorkout") {
-            BeginningWorkout(
-                navNext = { navController.navigate("DuringWorkout") },
-                navPrev = { navController.navigate("Home") })
-        }
-        composable("DuringWorkout") {
-            DuringWorkout(
-                navNext = { navController.navigate("Resting")},
-                navPrev = { navController.navigate("BeginningWorkout")})
-        }
-        composable("WorkoutHistory") {
-            WorkoutHistory(
-                navHome = {navController.navigate("Home")}
-            )
-        }
-        composable("ModifyRoutine") {
-            ModifyRoutine(
-                navHome = {navController.navigate("Home")}
-            )
-        }
-        composable("Resting") {
-            Resting(
-                navNext = { navController.navigate("CompletedWorkout") },
-                navPrev = { navController.navigate("DuringWorkout") }
-            )
-        }
-        composable("CompletedWorkout") {
-            Completed(
-                navHome = { navController.navigate("Home") },
-                navHistory = { navController.navigate("WorkoutHistory") }
-            )
-        }
-        composable("Settings") {
-            Settings(
-                navHome = { navController.navigate("Home") }
-            )
+            }
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = DrawerScreens.Home.route
+            ) {
+                composable("Home") {
+                    HomeScreen(
+                        navNext = { navController.navigate("BeginningWorkout") },
+                        navHistory = { navController.navigate("WorkoutHistory") },
+                        navModify = { navController.navigate("ModifyRoutine") },
+                        openDrawer = { openDrawer() }
+                    )
+                }
+                composable("BeginningWorkout") {
+                    BeginningWorkout(
+                        navNext = { navController.navigate("DuringWorkout") },
+                        navPrev = { navController.navigate("Home") },
+                        openDrawer = { openDrawer() }
+                    )
+                }
+                composable("DuringWorkout") {
+                    DuringWorkout(
+                        navNext = { navController.navigate("Resting") },
+                        navPrev = { navController.navigate("BeginningWorkout") },
+                        openDrawer = { openDrawer() }
+                    )
+                }
+                composable("WorkoutHistory") {
+                    WorkoutHistory(
+                        navHome = { navController.navigate("Home") },
+                        openDrawer = { openDrawer() }
+                    )
+                }
+                composable("ModifyRoutine") {
+                    ModifyRoutine(
+                        navHome = { navController.navigate("Home") },
+                        openDrawer = { openDrawer() }
+                    )
+                }
+                composable("Resting") {
+                    Resting(
+                        navNext = { navController.navigate("CompletedWorkout") },
+                        navPrev = { navController.navigate("DuringWorkout") },
+                        openDrawer = { openDrawer() }
+                    )
+                }
+                composable("CompletedWorkout") {
+                    Completed(
+                        navHome = { navController.navigate("Home") },
+                        navHistory = { navController.navigate("WorkoutHistory") },
+                        openDrawer = { openDrawer() }
+                    )
+                }
+                composable("Settings") {
+                    Settings(
+                        navHome = { navController.navigate("Home") },
+                        openDrawer = { openDrawer() }
+                    )
+                }
+            }
         }
     }
 }
-
 
 
 @Composable
@@ -95,18 +130,10 @@ fun HomeScreen(
     navNext: () -> Unit,
     navHistory: () -> Unit,
     navModify: () -> Unit,
-    navSettings: () -> Unit,
-    modifier: Modifier = Modifier) {
-    // TODO: This state should be hoisted
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        IconButton( modifier = Modifier.padding(vertical = 4.dp),onClick = navSettings) {
-            Icon(Icons.Filled.Settings, contentDescription = "Settings")
-        }
-
-    }
+    openDrawer: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    NavBar(onButtonClicked = openDrawer)
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -132,8 +159,10 @@ fun HomeScreen(
 fun BeginningWorkout(
     navNext: () -> Unit,
     navPrev: () -> Unit,
+    openDrawer: () -> Unit,
     modifier: Modifier = Modifier
-    ) {
+) {
+    NavBar(onButtonClicked = openDrawer)
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -150,7 +179,7 @@ fun BeginningWorkout(
         ElevatedButton(onClick = navPrev) {
             Text("Back")
         }
-        
+
     }
 }
 
@@ -158,8 +187,11 @@ fun BeginningWorkout(
 fun DuringWorkout(
     navNext: () -> Unit,
     navPrev: () -> Unit,
+    openDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    NavBar(onButtonClicked = openDrawer)
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -180,8 +212,11 @@ fun DuringWorkout(
 fun Resting(
     navNext: () -> Unit,
     navPrev: () -> Unit,
+    openDrawer: () -> Unit,
     modifier: Modifier = Modifier
-    ) {
+) {
+    NavBar(onButtonClicked = openDrawer)
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -205,8 +240,11 @@ fun Resting(
 fun Completed(
     navHome: () -> Unit,
     navHistory: () -> Unit,
+    openDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    NavBar(onButtonClicked = openDrawer)
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -228,13 +266,16 @@ fun Completed(
 @Composable
 fun WorkoutHistory(
     modifier: Modifier = Modifier,
-    navHome: () -> Unit
+    navHome: () -> Unit,
+    openDrawer: () -> Unit,
 ) {
+    NavBar(onButtonClicked = openDrawer)
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    ) {
         Text("Workout History")
 
         ElevatedButton(onClick = navHome) {
@@ -246,8 +287,12 @@ fun WorkoutHistory(
 @Composable
 fun ModifyRoutine(
     modifier: Modifier = Modifier,
-    navHome: () -> Unit
-) {
+    navHome: () -> Unit,
+    openDrawer: () -> Unit,
+
+    ) {
+    NavBar(onButtonClicked = openDrawer)
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -264,8 +309,12 @@ fun ModifyRoutine(
 @Composable
 fun Settings(
     modifier: Modifier = Modifier,
-    navHome: () -> Unit
-) {
+    navHome: () -> Unit,
+    openDrawer: () -> Unit,
+
+    ) {
+    NavBar(onButtonClicked = openDrawer)
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
