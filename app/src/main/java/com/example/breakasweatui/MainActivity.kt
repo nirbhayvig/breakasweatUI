@@ -61,13 +61,14 @@ fun Main(
                 )
             }
         ) {
+            // Handles all navigation between pages.
             NavHost(
                 navController = navController,
                 startDestination = DrawerScreens.Home.route
             ) {
                 composable("Home") {
                     HomeScreen(
-                        navNext = { navController.navigate("BeginningWorkout") },
+                        navBegin = { navController.navigate("BeginningWorkout") },
                         navHistory = { navController.navigate("WorkoutHistory") },
                         navModify = { navController.navigate("ModifyRoutine") },
                         openDrawer = { openDrawer() }
@@ -75,21 +76,22 @@ fun Main(
                 }
                 composable("BeginningWorkout") {
                     BeginningWorkout(
-                        navNext = { navController.navigate("DuringWorkout") },
-                        navPrev = { navController.navigate("Home") },
+                        navDuring = { navController.navigate("DuringWorkout") },
+                        navBack = { navController.popBackStack() },
                         openDrawer = { openDrawer() }
                     )
                 }
                 composable("DuringWorkout") {
                     DuringWorkout(
                         navNext = { navController.navigate("Resting") },
-                        navPrev = { navController.navigate("BeginningWorkout") },
+                        navBack = { navController.popBackStack() },
                         openDrawer = { openDrawer() }
                     )
                 }
                 composable("WorkoutHistory") {
                     WorkoutHistory(
                         navHome = { navController.navigate("Home") },
+                        navBack = { navController.popBackStack() },
                         openDrawer = { openDrawer() }
                     )
                 }
@@ -102,7 +104,7 @@ fun Main(
                 composable("Resting") {
                     Resting(
                         navNext = { navController.navigate("CompletedWorkout") },
-                        navPrev = { navController.navigate("DuringWorkout") },
+                        navBack = { navController.popBackStack() },
                         openDrawer = { openDrawer() }
                     )
                 }
@@ -116,223 +118,11 @@ fun Main(
                 composable("Settings") {
                     Settings(
                         navHome = { navController.navigate("Home") },
-                        openDrawer = { openDrawer() }
+                        openDrawer = { openDrawer() },
+                        navBack = { navController.popBackStack() }
                     )
                 }
             }
         }
     }
 }
-
-
-@Composable
-fun HomeScreen(
-    navNext: () -> Unit,
-    navHistory: () -> Unit,
-    navModify: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    NavBar(onButtonClicked = openDrawer)
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Welcome to Break a Sweat!", modifier = Modifier.padding(bottom = 24.dp))
-
-        ElevatedButton(modifier = Modifier.padding(vertical = 12.dp), onClick = navNext) {
-            Text("Start Workout")
-        }
-
-        ElevatedButton(modifier = Modifier.padding(vertical = 6.dp), onClick = navHistory) {
-            Text("Workout History")
-        }
-
-        ElevatedButton(modifier = Modifier.padding(vertical = 6.dp), onClick = navModify) {
-            Text("Edit Workouts")
-        }
-    }
-}
-
-@Composable
-fun BeginningWorkout(
-    navNext: () -> Unit,
-    navPrev: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    NavBar(onButtonClicked = openDrawer)
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Begin Workout:")
-        Text("Exercises:")
-        Text("Exercise 1, 2, & 3")
-
-        ElevatedButton(onClick = navNext) {
-            Text("Start")
-        }
-
-        ElevatedButton(onClick = navPrev) {
-            Text("Back")
-        }
-
-    }
-}
-
-@Composable
-fun DuringWorkout(
-    navNext: () -> Unit,
-    navPrev: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    NavBar(onButtonClicked = openDrawer)
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("DuringWorkout:")
-        ElevatedButton(onClick = navNext) {
-            Text("Next")
-        }
-
-        ElevatedButton(onClick = navPrev) {
-            Text("Back")
-        }
-    }
-}
-
-@Composable
-fun Resting(
-    navNext: () -> Unit,
-    navPrev: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    NavBar(onButtonClicked = openDrawer)
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Resting:")
-        Text("Next up:")
-        Text("Exercise 3")
-
-        ElevatedButton(onClick = navNext) {
-            Text("Continue")
-        }
-
-        ElevatedButton(onClick = navPrev) {
-            Text("Back")
-        }
-    }
-}
-
-@Composable
-fun Completed(
-    navHome: () -> Unit,
-    navHistory: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    NavBar(onButtonClicked = openDrawer)
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Workout Completed")
-        Text("Congrats! You completed a workout!")
-
-        ElevatedButton(onClick = navHome) {
-            Text("Home")
-        }
-
-        ElevatedButton(onClick = navHistory) {
-            Text("Workout History")
-        }
-    }
-}
-
-@Composable
-fun WorkoutHistory(
-    modifier: Modifier = Modifier,
-    navHome: () -> Unit,
-    openDrawer: () -> Unit,
-) {
-    NavBar(onButtonClicked = openDrawer)
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Workout History")
-
-        ElevatedButton(onClick = navHome) {
-            Text("Home")
-        }
-    }
-}
-
-@Composable
-fun ModifyRoutine(
-    modifier: Modifier = Modifier,
-    navHome: () -> Unit,
-    openDrawer: () -> Unit,
-
-    ) {
-    NavBar(onButtonClicked = openDrawer)
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Edit Workout Routine")
-
-        ElevatedButton(onClick = navHome) {
-            Text("Home")
-        }
-    }
-}
-
-@Composable
-fun Settings(
-    modifier: Modifier = Modifier,
-    navHome: () -> Unit,
-    openDrawer: () -> Unit,
-
-    ) {
-    NavBar(onButtonClicked = openDrawer)
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Settings:")
-
-        ElevatedButton(onClick = navHome) {
-            Text("Home")
-        }
-    }
-}
-
-//
-//@Preview(showBackground = true, widthDp = 320, heightDp = 320)
-//@Composable
-//fun WelcomePreview() {
-//    BreakaSweatUITheme {
-//        WelcomeScreen(navNext = {})
-//    }
-//}
