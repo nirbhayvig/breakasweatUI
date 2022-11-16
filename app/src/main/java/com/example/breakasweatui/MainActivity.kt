@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Main(
-        modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = "Home"
 ) {
@@ -47,80 +47,59 @@ fun Main(
                 drawerState.open()
             }
         }
-        NavigationDrawer(
-            drawerState = drawerState,
+        NavigationDrawer(drawerState = drawerState,
             gesturesEnabled = drawerState.isOpen,
             drawerContent = {
-                Drawer(
-                    onDestinationClicked = { route ->
-                        scope.launch {
-                            drawerState.close()
-                        }
-                        navController.navigate(route)
+                Drawer(onDestinationClicked = { route ->
+                    scope.launch {
+                        drawerState.close()
                     }
-                )
-            }
-        ) {
+                    navController.navigate(route)
+                })
+            }) {
             // Handles all navigation between pages.
             NavHost(
-                navController = navController,
-                startDestination = DrawerScreens.Home.route
+                navController = navController, startDestination = DrawerScreens.Home.route
             ) {
                 composable("Home") {
-                    HomeScreen(
-                        navBegin = { navController.navigate("BeginningWorkout") },
+                    HomeScreen(navBegin = { navController.navigate("BeginningWorkout") },
                         navHistory = { navController.navigate("WorkoutHistory") },
                         navModify = { navController.navigate("ModifyRoutine") },
-                        openDrawer = { openDrawer() }
-                    )
+                        openDrawer = { openDrawer() })
                 }
                 composable("BeginningWorkout") {
-                    BeginningWorkout(
-                        navDuring = { navController.navigate("DuringWorkout") },
+                    BeginningWorkout(navDuring = { navController.navigate("DuringWorkout") },
                         navBack = { navController.popBackStack() },
-                        openDrawer = { openDrawer() }
-                    )
+                        openDrawer = { openDrawer() })
                 }
                 composable("DuringWorkout") {
-                    DuringWorkout(
-                        navNext = { navController.navigate("Resting") },
+                    DuringWorkout(navNext = { navController.navigate("Resting") },
                         navBack = { navController.popBackStack() },
-                        openDrawer = { openDrawer() }
-                    )
+                        openDrawer = { openDrawer() })
                 }
                 composable("WorkoutHistory") {
-                    WorkoutHistory(
-                        navHome = { navController.navigate("Home") },
+                    WorkoutHistory(navHome = { navController.navigate("Home") },
                         navBack = { navController.popBackStack() },
-                        openDrawer = { openDrawer() }
-                    )
+                        openDrawer = { openDrawer() })
                 }
                 composable("ModifyRoutine") {
-                    ModifyRoutine(
-                        navHome = { navController.navigate("Home") },
-                        openDrawer = { openDrawer() }
-                    )
+                    ModifyRoutine(navHome = { navController.navigate("Home") },
+                        openDrawer = { openDrawer() })
                 }
                 composable("Resting") {
-                    Resting(
-                        navNext = { navController.navigate("CompletedWorkout") },
+                    Resting(navNext = { navController.navigate("CompletedWorkout") },
                         navBack = { navController.popBackStack() },
-                        openDrawer = { openDrawer() }
-                    )
+                        openDrawer = { openDrawer() })
                 }
                 composable("CompletedWorkout") {
-                    Completed(
-                        navHome = { navController.navigate("Home") },
+                    Completed(navHome = { navController.navigate("Home") },
                         navHistory = { navController.navigate("WorkoutHistory") },
-                        openDrawer = { openDrawer() }
-                    )
+                        openDrawer = { openDrawer() })
                 }
                 composable("Settings") {
-                    Settings(
-                        navHome = { navController.navigate("Home") },
+                    Settings(navHome = { navController.navigate("Home") },
                         openDrawer = { openDrawer() },
-                        navBack = { navController.popBackStack() }
-                    )
+                        navBack = { navController.popBackStack() })
                 }
             }
         }

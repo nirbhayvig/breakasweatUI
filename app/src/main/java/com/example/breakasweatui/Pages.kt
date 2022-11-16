@@ -44,8 +44,7 @@ fun BeginningWorkout(
     ) {
         val exercises = PopulateData()
         CustomText(xText = "Begin Workout:")
-        CustomText(xText = "Exercises:")
-        CustomText(xText = "Exercise 1, 2, & 4")
+        CustomText(xText = "Exercises for today:")
         ExerciseList(exercises = exercises)
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -65,10 +64,7 @@ fun BeginningWorkout(
 
 @Composable
 fun DuringWorkout(
-    navNext: () -> Unit,
-    navBack: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -94,10 +90,7 @@ fun DuringWorkout(
 
 @Composable
 fun Resting(
-    navNext: () -> Unit,
-    navBack: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -146,10 +139,7 @@ fun Completed(
 
 @Composable
 fun WorkoutHistory(
-    modifier: Modifier = Modifier,
-    navHome: () -> Unit,
-    openDrawer: () -> Unit,
-    navBack: () -> Unit
+    modifier: Modifier = Modifier, navHome: () -> Unit, openDrawer: () -> Unit, navBack: () -> Unit
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -169,7 +159,7 @@ fun ModifyRoutine(
     modifier: Modifier = Modifier,
     navHome: () -> Unit,
     openDrawer: () -> Unit,
-    ) {
+) {
     NavBar(onButtonClicked = openDrawer)
 
     Column(
@@ -189,7 +179,7 @@ fun Settings(
     navHome: () -> Unit,
     openDrawer: () -> Unit,
     navBack: () -> Unit,
-    ) {
+) {
     NavBar(onButtonClicked = openDrawer)
 
     Column(
