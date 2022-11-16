@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Main(
-    modifier: Modifier = Modifier,
+        modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = "Home"
 ) {
