@@ -168,7 +168,8 @@ fun ModifyRoutine(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomText("Edit Workout Routine")
-
+        val exercises = PopulateData()
+        ExerciseList(exercises = exercises)
         CustomElevatedButton(xText = "Home", xOnClick = navHome)
     }
 }
