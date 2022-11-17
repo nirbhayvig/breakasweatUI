@@ -1,8 +1,7 @@
 package com.example.breakasweatui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,19 +22,10 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Welcome to Break a Sweat!", modifier = Modifier.padding(bottom = 24.dp))
-
-        ElevatedButton(modifier = Modifier.padding(vertical = 12.dp), onClick = navBegin) {
-            Text("Start Workout")
-        }
-
-        ElevatedButton(modifier = Modifier.padding(vertical = 6.dp), onClick = navHistory) {
-            Text("Workout History")
-        }
-
-        ElevatedButton(modifier = Modifier.padding(vertical = 6.dp), onClick = navModify) {
-            Text("Edit Workouts")
-        }
+        CustomText(xText = "Welcome to Break a Sweat")
+        CustomElevatedButton(xText = "Start Workout", xOnClick = navBegin)
+        CustomElevatedButton(xText = "Workout History", xOnClick = navHistory)
+        CustomElevatedButton(xText = "Edit Workouts", xOnClick = navModify)
     }
 }
 
@@ -52,24 +42,21 @@ fun BeginningWorkout(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Begin Workout:")
-        Text("Exercises:")
-        Text("Exercise 1, 2, & 3")
+        val exercises = PopulateData()
+        CustomText(xText = "Begin Workout:")
+        CustomText(xText = "Exercises for today:")
+        ExerciseList(exercises = exercises)
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
-            ElevatedButton(onClick = navBack) {
-                Text("Back")
-            }
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
 
             Spacer(modifier = Modifier.width(24.dp))
 
-            ElevatedButton(onClick = navDuring, ) {
-                Text("Start")
-            }
+            CustomElevatedButton(xText = "Start", xOnClick = navDuring)
         }
     }
 
@@ -77,10 +64,7 @@ fun BeginningWorkout(
 
 @Composable
 fun DuringWorkout(
-    navNext: () -> Unit,
-    navBack: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -89,32 +73,24 @@ fun DuringWorkout(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("DuringWorkout:")
+        CustomText(xText = "DuringWorkout:")
+
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
-            ElevatedButton(onClick = navBack) {
-                Text("Back")
-            }
-
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
             Spacer(modifier = Modifier.width(24.dp))
-
-            ElevatedButton(onClick = navNext) {
-                Text("Next")
-            }
+            CustomElevatedButton(xText = "Next", xOnClick = navNext)
         }
     }
 }
 
 @Composable
 fun Resting(
-    navNext: () -> Unit,
-    navBack: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -123,22 +99,18 @@ fun Resting(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Resting:")
-        Text("Next up:")
-        Text("Exercise 3")
+        CustomText("Resting:")
+        CustomText("Next up:")
+        CustomText("Exercise 3")
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
-            ElevatedButton(onClick = navBack) {
-                Text("Back")
-            }
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
             Spacer(modifier = Modifier.width(24.dp))
-            ElevatedButton(onClick = navNext) {
-                Text("Continue")
-            }
+            CustomElevatedButton(xText = "Continue", xOnClick = navNext)
         }
     }
 }
@@ -157,25 +129,17 @@ fun Completed(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Workout Completed")
-        Text("Congrats! You completed a workout!")
+        CustomText("Workout Completed")
+        CustomText("Congrats! You completed a workout!")
         Spacer(modifier = Modifier.height(24.dp))
-        ElevatedButton(onClick = navHome, modifier = Modifier.padding(vertical = 12.dp)) {
-            Text("Home")
-        }
-
-        ElevatedButton(onClick = navHistory, modifier = Modifier.padding(vertical = 12.dp)) {
-            Text("Workout History")
-        }
+        CustomElevatedButton(xOnClick = navHome, xText = "Home")
+        CustomElevatedButton(xOnClick = navHistory, xText = "Workout History")
     }
 }
 
 @Composable
 fun WorkoutHistory(
-    modifier: Modifier = Modifier,
-    navHome: () -> Unit,
-    openDrawer: () -> Unit,
-    navBack: () -> Unit
+    modifier: Modifier = Modifier, navHome: () -> Unit, openDrawer: () -> Unit, navBack: () -> Unit
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -184,14 +148,9 @@ fun WorkoutHistory(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Workout History")
-
-        ElevatedButton(onClick = navHome) {
-            Text("Home")
-        }
-        ElevatedButton(onClick = navBack) {
-            Text(text = "Back")
-        }
+        CustomText("Workout History")
+        CustomElevatedButton(xText = "Home", xOnClick = navHome)
+        CustomElevatedButton(xText = "Back", xOnClick = navBack)
     }
 }
 
@@ -200,8 +159,7 @@ fun ModifyRoutine(
     modifier: Modifier = Modifier,
     navHome: () -> Unit,
     openDrawer: () -> Unit,
-
-    ) {
+) {
     NavBar(onButtonClicked = openDrawer)
 
     Column(
@@ -209,11 +167,10 @@ fun ModifyRoutine(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Edit Workout Routine")
-
-        ElevatedButton(onClick = navHome) {
-            Text("Home")
-        }
+        CustomText("Edit Workout Routine")
+        val exercises = PopulateData()
+        ExerciseList(exercises = exercises)
+        CustomElevatedButton(xText = "Home", xOnClick = navHome)
     }
 }
 
@@ -223,7 +180,7 @@ fun Settings(
     navHome: () -> Unit,
     openDrawer: () -> Unit,
     navBack: () -> Unit,
-    ) {
+) {
     NavBar(onButtonClicked = openDrawer)
 
     Column(
@@ -231,15 +188,10 @@ fun Settings(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Settings:")
+        CustomText("Settings:")
 
-        ElevatedButton(onClick = navBack) {
-            Text(text = "Back")
-        }
-
-        ElevatedButton(onClick = navHome) {
-            Text("Home")
-        }
+        CustomElevatedButton(xText = "Back", xOnClick = navBack)
+        CustomElevatedButton(xText = "Home", xOnClick = navHome)
     }
 
 }
