@@ -1,15 +1,11 @@
 package com.example.breakasweatui
 
-import android.graphics.Color
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-
 
 
 @Composable
@@ -20,33 +16,16 @@ fun HomeScreen(
     openDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     NavBar(onButtonClicked = openDrawer)
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Text(text = "Welcome to Break a Sweat!", modifier = Modifier.padding(bottom = 70.dp))
-
-        ElevatedButton(modifier = Modifier
-            .padding(vertical = 30.dp)
-            .height(100.dp)
-            .width(270.dp), onClick = navBegin,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
-            Text("Start Workout", fontSize = 20.sp, color = MaterialTheme.colorScheme.onPrimary)
-        }
-
-        ElevatedButton(modifier = Modifier.padding(vertical = 6.dp), onClick = navHistory,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) {
-            Text("Workout History", color = MaterialTheme.colorScheme.onSecondary)
-        }
-
-        ElevatedButton(modifier = Modifier.padding(vertical = 6.dp), onClick = navModify,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) {
-            Text("Edit Workouts", color = MaterialTheme.colorScheme.onSecondary)
-        }
+        CustomText(xText = "Welcome to Break a Sweat")
+        CustomElevatedButton(xText = "Start Workout", xOnClick = navBegin)
+        CustomElevatedButton(xText = "Workout History", xOnClick = navHistory)
+        CustomElevatedButton(xText = "Edit Workouts", xOnClick = navModify)
     }
 }
 
@@ -63,27 +42,21 @@ fun BeginningWorkout(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Begin Workout:")
-        Text("Exercises:")
-        Text("Exercise 1, 2, & 3")
+        val exercises = PopulateData()
+        CustomText(xText = "Begin Workout:")
+        CustomText(xText = "Exercises for today:")
+        ExerciseList(exercises = exercises)
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
-            ElevatedButton(onClick = navBack,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-                Text("Back", color = MaterialTheme.colorScheme.onSecondaryContainer)
-            }
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
 
             Spacer(modifier = Modifier.width(24.dp))
 
-            ElevatedButton(onClick = navDuring,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                modifier = Modifier.width(150.dp).height(50.dp)) {
-                Text("Start", color = MaterialTheme.colorScheme.onPrimary)
-            }
+            CustomElevatedButton(xText = "Start", xOnClick = navDuring)
         }
     }
 
@@ -91,10 +64,7 @@ fun BeginningWorkout(
 
 @Composable
 fun DuringWorkout(
-    navNext: () -> Unit,
-    navBack: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -103,35 +73,24 @@ fun DuringWorkout(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("DuringWorkout:")
+        CustomText(xText = "DuringWorkout:")
+
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
-            ElevatedButton(onClick = navBack,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-                Text("Back", color = MaterialTheme.colorScheme.onSecondaryContainer)
-            }
-
-
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
             Spacer(modifier = Modifier.width(24.dp))
-
-            ElevatedButton(onClick = navNext,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
-                Text("Next", color = MaterialTheme.colorScheme.onPrimary)
-            }
+            CustomElevatedButton(xText = "Next", xOnClick = navNext)
         }
     }
 }
 
 @Composable
 fun Resting(
-    navNext: () -> Unit,
-    navBack: () -> Unit,
-    openDrawer: () -> Unit,
-    modifier: Modifier = Modifier
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -140,24 +99,18 @@ fun Resting(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Resting:")
-        Text("Next up:")
-        Text("Exercise 3")
+        CustomText("Resting:")
+        CustomText("Next up:")
+        CustomText("Exercise 3")
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
-            ElevatedButton(onClick = navBack,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-                Text("Back", color = MaterialTheme.colorScheme.onSecondaryContainer)
-            }
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
             Spacer(modifier = Modifier.width(24.dp))
-            ElevatedButton(onClick = navNext,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
-                Text("Continue", color = MaterialTheme.colorScheme.onPrimary)
-            }
+            CustomElevatedButton(xText = "Continue", xOnClick = navNext)
         }
     }
 }
@@ -176,27 +129,17 @@ fun Completed(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Workout Completed")
-        Text("Congrats! You completed a workout!")
+        CustomText("Workout Completed")
+        CustomText("Congrats! You completed a workout!")
         Spacer(modifier = Modifier.height(24.dp))
-        ElevatedButton(onClick = navHome, modifier = Modifier.padding(vertical = 12.dp).height(80.dp).width(150.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
-            Text("Home", color=MaterialTheme.colorScheme.onPrimary)
-        }
-
-        ElevatedButton(onClick = navHistory, modifier = Modifier.padding(vertical = 12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) {
-            Text("Workout History", color = MaterialTheme.colorScheme.onSecondary)
-        }
+        CustomElevatedButton(xOnClick = navHome, xText = "Home")
+        CustomElevatedButton(xOnClick = navHistory, xText = "Workout History")
     }
 }
 
 @Composable
 fun WorkoutHistory(
-    modifier: Modifier = Modifier,
-    navHome: () -> Unit,
-    openDrawer: () -> Unit,
-    navBack: () -> Unit
+    modifier: Modifier = Modifier, navHome: () -> Unit, openDrawer: () -> Unit, navBack: () -> Unit
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -205,16 +148,9 @@ fun WorkoutHistory(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Workout History")
-
-        ElevatedButton(onClick = navHome,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
-            Text("Home", color=MaterialTheme.colorScheme.onPrimary)
-        }
-        ElevatedButton(onClick = navBack,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-            Text(text = "Back", color = MaterialTheme.colorScheme.onSecondaryContainer)
-        }
+        CustomText("Workout History")
+        CustomElevatedButton(xText = "Home", xOnClick = navHome)
+        CustomElevatedButton(xText = "Back", xOnClick = navBack)
     }
 }
 
@@ -223,8 +159,7 @@ fun ModifyRoutine(
     modifier: Modifier = Modifier,
     navHome: () -> Unit,
     openDrawer: () -> Unit,
-
-    ) {
+) {
     NavBar(onButtonClicked = openDrawer)
 
     Column(
@@ -232,12 +167,10 @@ fun ModifyRoutine(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Edit Workout Routine")
-
-        ElevatedButton(onClick = navHome,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
-            Text("Home", color=MaterialTheme.colorScheme.onPrimary)
-        }
+        CustomText("Edit Workout Routine")
+        val exercises = PopulateData()
+        ExerciseList(exercises = exercises)
+        CustomElevatedButton(xText = "Home", xOnClick = navHome)
     }
 }
 
@@ -247,7 +180,7 @@ fun Settings(
     navHome: () -> Unit,
     openDrawer: () -> Unit,
     navBack: () -> Unit,
-    ) {
+) {
     NavBar(onButtonClicked = openDrawer)
 
     Column(
@@ -255,17 +188,10 @@ fun Settings(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Settings:")
+        CustomText("Settings:")
 
-        ElevatedButton(onClick = navBack,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-            Text(text = "Back", color = MaterialTheme.colorScheme.onSecondaryContainer)
-        }
-
-        ElevatedButton(onClick = navHome,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
-            Text("Home", color=MaterialTheme.colorScheme.onPrimary)
-        }
+        CustomElevatedButton(xText = "Back", xOnClick = navBack)
+        CustomElevatedButton(xText = "Home", xOnClick = navHome)
     }
 
 }
