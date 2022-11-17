@@ -2,6 +2,8 @@ package com.example.breakasweatui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +25,9 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomText(xText = "Welcome to Break a Sweat")
-        CustomElevatedButton(xText = "Start Workout", xOnClick = navBegin)
-        CustomElevatedButton(xText = "Workout History", xOnClick = navHistory)
+        CustomElevatedButton(xText = "Start Workout", xOnClick = navBegin,
+            modifier = Modifier.height(100.dp).width(300.dp))
+        CustomElevatedButton(xText = "Workout History", xOnClick = navHistory, modifier = Modifier.padding(top=40.dp))
         CustomElevatedButton(xText = "Edit Workouts", xOnClick = navModify)
     }
 }

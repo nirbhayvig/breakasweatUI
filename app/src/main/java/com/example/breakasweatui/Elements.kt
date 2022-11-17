@@ -7,9 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,10 +40,11 @@ fun PopulateData(): List<Exercise> {
 
 @Composable
 fun CustomElevatedButton(
-    xText: String, xOnClick: () -> Unit, modifier: Modifier = Modifier.padding(vertical = 12.dp)
+    xText: String, xOnClick: () -> Unit, modifier: Modifier = Modifier.padding(vertical = 12.dp),
+    color: ButtonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
 ) {
-    ElevatedButton(modifier = modifier, onClick = xOnClick) {
-        Text(xText)
+    ElevatedButton(modifier = modifier, onClick = xOnClick, colors = color) {
+        Text(xText, color = MaterialTheme.colorScheme.onPrimaryContainer)
     }
 }
 
@@ -56,10 +55,11 @@ fun CustomElevatedButtonWithSubtext(
     xOnClick: () -> Unit,
     modifier: Modifier = Modifier.padding(vertical = 12.dp)
 ) {
-    ElevatedButton(modifier = modifier, onClick = xOnClick) {
+    ElevatedButton(modifier = modifier, onClick = xOnClick,
+        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiaryContainer)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(xText, style = MaterialTheme.typography.titleLarge)
-            Text(xSubText, style = MaterialTheme.typography.labelSmall)
+            Text(xText, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onTertiaryContainer)
+            Text(xSubText, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onTertiaryContainer)
         }
     }
 }
