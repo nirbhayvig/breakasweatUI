@@ -3,7 +3,10 @@
     <option name="myName" value="Project Default" />
     <inspection_tool class="PreviewAnnotationInFunctionWithParameters" enabled="true" level="ERROR" enabled_by_default="true">
       <option name="composableFile" value="true" />
+<<<<<<< HEAD
+=======
 <<<<<<< Updated upstream
+>>>>>>> main
       <option name="previewFile" value="true" />
     </inspection_tool>
     <inspection_tool class="PreviewDimensionRespectsLimit" enabled="true" level="WARNING" enabled_by_default="true">
@@ -33,6 +36,8 @@
     <inspection_tool class="PreviewPickerAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
       <option name="composableFile" value="true" />
       <option name="previewFile" value="true" />
+<<<<<<< HEAD
+=======
 =======
     </inspection_tool>
     <inspection_tool class="PreviewDimensionRespectsLimit" enabled="true" level="WARNING" enabled_by_default="true">
@@ -56,6 +61,7 @@
     <inspection_tool class="PreviewPickerAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
       <option name="composableFile" value="true" />
 >>>>>>> Stashed changes
+>>>>>>> main
     </inspection_tool>
   </profile>
 </component>
