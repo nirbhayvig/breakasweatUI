@@ -158,7 +158,7 @@ fun WorkoutHistory(
 }
 
 @Composable
-fun ModifyRoutine(
+fun ModifyRoutine(                                                                  // Edit Workout
     modifier: Modifier = Modifier,
     navHome: () -> Unit,
     openDrawer: () -> Unit,
@@ -172,7 +172,7 @@ fun ModifyRoutine(
     ) {
         CustomText("Edit Workout Routine")
         val exercises = PopulateData()
-        ExerciseList(exercises = exercises)
+        ExerciseEditList(exercises = exercises)
         CustomElevatedButton(xText = "Home", xOnClick = navHome)
     }
 }

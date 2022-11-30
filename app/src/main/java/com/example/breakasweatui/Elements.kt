@@ -1,5 +1,6 @@
 package com.example.breakasweatui
 
+import android.widget.EditText
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -8,8 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -19,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -115,9 +117,42 @@ fun ExerciseButton(
     )
 }
 
+@Composable
+fun ExerciseEditList(
+    exercises: List<Exercise>,
+     ,
+    modifier: Modifier = Modifier
+) {
+    var inputText by rememberSaveable{ mutableStateOf("hello") }
 
+    LazyColumn(
+        modifier = Modifier
+            .border(
+                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
+            )
+            .height(300.dp)
+            .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
+        items(exercises.size) { i ->
+            ExerciseTextEdit(inputText, { inputText = it })
+        }
+    }
+}
 
+@Composable
+fun ExerciseTextEdit(
+    inputText: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+//    val exerciseSubText: String =
+//        "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
+//    CustomText(xText = exercise.name)
+//    CustomText(xText = exerciseSubText)
+
+    OutlinedTextField(value = inputText, onValueChange = { onValueChange }, label = { Text("Label")})
+}
 
 
 
