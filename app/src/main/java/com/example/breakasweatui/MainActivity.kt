@@ -87,7 +87,8 @@ class MainActivity : ComponentActivity() {
                             openDrawer = { openDrawer() })
                     }
                     composable("DuringWorkout") {
-                        DuringWorkout(navNext = { navController.navigate("Resting") },
+                        DuringWorkout(navNext = {  },
+                            navResting = { navController.navigate("Resting") },
                             navBack = { navController.popBackStack() },
                             openDrawer = { openDrawer() })
                     }

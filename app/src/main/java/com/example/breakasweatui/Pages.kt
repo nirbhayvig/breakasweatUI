@@ -57,10 +57,10 @@ fun BeginningWorkout(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val exercises = PopulateData()
+        val exercises = workoutDao.getAll()
         CustomText(xText = "Begin Workout:")
         CustomText(xText = "Exercises for today:")
-        ExerciseList(exercises = exercises)
+        WorkoutViewList(exercises = exercises)
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -79,7 +79,7 @@ fun BeginningWorkout(
 
 @Composable
 fun DuringWorkout(
-    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
+    navNext: () -> Unit, navResting: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -89,6 +89,8 @@ fun DuringWorkout(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomText(xText = "DuringWorkout:")
+        val exercises = workoutDao.getAll()
+        WorkoutToggleList(exercises = exercises)
 
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -188,12 +190,27 @@ fun ModifyRoutine(
         CustomText("Edit Workout Routine")
         val workoutList = workoutDao.getAll()
         var exercises by remember { mutableStateOf(workoutList) }
-        WorkoutList(exercises = exercises, update = update)
+        WorkoutEditList(exercises = exercises, update = update)
 
         CustomElevatedButton(
-            xText = "Add new", xOnClick = addNew, modifier = Modifier.padding(6.dp)
+            xText = "Add new workout", xOnClick = addNew, modifier = Modifier.padding(6.dp)
         )
 
+        CustomElevatedButton(
+            xText = "Add new rest",
+            xOnClick = {
+                workoutDao.insertAll(
+                    Workout(
+                        name = "Resting",
+                        reps = null,
+                        sets = null,
+                        weight = null
+                    )
+                )
+                exercises = workoutDao.getAll()
+            },
+            modifier = Modifier.padding(6.dp)
+        )
         CustomElevatedButton(xText = "Delete All", xOnClick = {
             val workoutsToDelete = workoutDao.getAll()
             for (workout in workoutsToDelete) {

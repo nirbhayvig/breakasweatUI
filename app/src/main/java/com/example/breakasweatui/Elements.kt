@@ -29,17 +29,6 @@ import com.example.breakasweatui.ui.theme.BreakaSweatUITheme
 
 data class Exercise(val name: String, val reps: Int?, val sets: Int?, val weight: Int?)
 
-fun PopulateData(): List<Exercise> {
-    return listOf<Exercise>(
-        Exercise("Bicep Curls", 10, 3, 20),
-        Exercise("Bench Press", 10, 3, 120),
-        Exercise("Deadlift", 10, 3, 200),
-        Exercise("Bicep Curls", 10, 3, 20),
-        Exercise("Bench Press", 10, 3, 120),
-        Exercise("Deadlift", 10, 3, 200),
-    )
-}
-
 @Composable
 fun CustomElevatedButton(
     xText: String,
@@ -86,53 +75,9 @@ fun CustomText(
     Text(text = xText, modifier = modifier)
 }
 
-@Composable
-fun ExerciseList(
-    exercises: List<Exercise>, modifier: Modifier = Modifier
-) {
-    LazyColumn(
-        modifier = Modifier
-            .border(
-                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
-            )
-            .height(300.dp)
-            .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        items(exercises.size) { i ->
-            ExerciseButton(exercise = exercises[i])
-        }
-    }
-}
-
-@Preview
-@Composable
-fun ExerciseListPreview(
-
-) {
-    BreakaSweatUITheme() {
-        ExerciseList(exercises = PopulateData())
-    }
-}
 
 @Composable
-fun ExerciseButton(
-    exercise: Exercise
-) {
-    val exerciseSubText: String =
-        "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
-    CustomElevatedButtonWithSubtext(
-        xText = exercise.name,
-        xSubText = exerciseSubText,
-        xOnClick = { /*TODO*/ },
-        modifier = Modifier
-            .padding(vertical = 6.dp, horizontal = 5.dp)
-            .width(200.dp)
-    )
-
-}
-
-@Composable
-fun WorkoutList(
+fun WorkoutEditList(
     exercises: List<Workout>, modifier: Modifier = Modifier, update: (Workout) -> Unit
 ) {
     LazyColumn(
@@ -144,26 +89,126 @@ fun WorkoutList(
             .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(exercises.size) { i ->
-            WorkoutButton(exercise = exercises[i], update)
+            WorkoutUpdateButton(exercise = exercises[i], update)
         }
     }
 }
 
 @Composable
-fun WorkoutButton(
-    exercise: Workout,
-    update: (Workout) -> Unit
+fun WorkoutViewList(
+    exercises: List<Workout>, modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = Modifier
+            .border(
+                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
+            )
+            .height(300.dp)
+            .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        items(exercises.size) { i ->
+            WorkoutViewButton(exercise = exercises[i])
+        }
+    }
+}
+
+@Composable
+fun WorkoutToggleList(
+    exercises: List<Workout>, modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = Modifier
+            .border(
+                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
+            )
+            .height(300.dp)
+            .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        items(exercises.size) { i ->
+            WorkoutToggleButton(exercise = exercises[i])
+        }
+    }
+}
+
+
+@Composable
+fun WorkoutToggleButton(
+    exercise: Workout
 ) {
     val exerciseSubText: String =
         "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
-    CustomElevatedButtonWithSubtext(
-        xText = exercise.name,
-        xSubText = exerciseSubText,
-        xOnClick = {  update(exercise) },
-        modifier = Modifier
-            .padding(vertical = 6.dp, horizontal = 5.dp)
-            .width(200.dp)
-    )
+    if (exercise.name == "Resting") {
+        CustomElevatedButton(
+            xText = exercise.name,
+            xOnClick = { },
+            modifier = Modifier
+                .padding(vertical = 6.dp, horizontal = 5.dp)
+                .width(200.dp)
+        )
+    } else {
+        CustomElevatedButtonWithSubtext(
+            xText = exercise.name,
+            xSubText = exerciseSubText,
+            xOnClick = { },
+            modifier = Modifier
+                .padding(vertical = 6.dp, horizontal = 5.dp)
+                .width(200.dp)
+        )
+    }
+
+}
+
+@Composable
+fun WorkoutViewButton(
+    exercise: Workout
+) {
+    val exerciseSubText: String =
+        "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
+    if (exercise.name == "Resting") {
+        CustomElevatedButton(
+            xText = exercise.name,
+            xOnClick = { },
+            modifier = Modifier
+                .padding(vertical = 6.dp, horizontal = 5.dp)
+                .width(200.dp)
+        )
+    } else {
+        CustomElevatedButtonWithSubtext(
+            xText = exercise.name,
+            xSubText = exerciseSubText,
+            xOnClick = { },
+            modifier = Modifier
+                .padding(vertical = 6.dp, horizontal = 5.dp)
+                .width(200.dp)
+        )
+    }
+
+}
+
+@Composable
+fun WorkoutUpdateButton(
+    exercise: Workout, update: (Workout) -> Unit
+) {
+    val exerciseSubText: String =
+        "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
+    if (exercise.name == "Resting") {
+        CustomElevatedButton(
+            xText = exercise.name,
+            xOnClick = { update(exercise) },
+            modifier = Modifier
+                .padding(vertical = 6.dp, horizontal = 5.dp)
+                .width(200.dp)
+        )
+    } else {
+        CustomElevatedButtonWithSubtext(
+            xText = exercise.name,
+            xSubText = exerciseSubText,
+            xOnClick = { update(exercise) },
+            modifier = Modifier
+                .padding(vertical = 6.dp, horizontal = 5.dp)
+                .width(200.dp)
+        )
+    }
 
 }
 
@@ -178,8 +223,7 @@ fun TextEdit(
 //    CustomText(xText = exercise.name)
 //    CustomText(xText = exerciseSubText)
 
-    OutlinedTextField(
-        value = inputText,
+    OutlinedTextField(value = inputText,
         onValueChange = { inputText = it },
         label = { Text(defaultText) })
 }
