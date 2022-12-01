@@ -119,11 +119,9 @@ fun ExerciseButton(
 
 @Composable
 fun ExerciseEditList(
-    exercises: List<Exercise>,
-     ,
+    exercises: List<Workout>,
     modifier: Modifier = Modifier
 ) {
-    var inputText by rememberSaveable{ mutableStateOf("hello") }
 
     LazyColumn(
         modifier = Modifier
@@ -135,23 +133,24 @@ fun ExerciseEditList(
     ) {
 
         items(exercises.size) { i ->
-            ExerciseTextEdit(inputText, { inputText = it })
+            ExerciseTextEdit(exercises[i])
         }
     }
 }
 
 @Composable
 fun ExerciseTextEdit(
-    inputText: String,
-    onValueChange: (String) -> Unit,
+    workout: Workout,
     modifier: Modifier = Modifier
 ) {
+    var inputText by rememberSaveable{ mutableStateOf(workout.name) }
+
 //    val exerciseSubText: String =
 //        "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
 //    CustomText(xText = exercise.name)
 //    CustomText(xText = exerciseSubText)
 
-    OutlinedTextField(value = inputText, onValueChange = { onValueChange }, label = { Text("Label")})
+    OutlinedTextField(value = inputText, onValueChange = { inputText = it }, label = { Text("Label")})
 }
 
 

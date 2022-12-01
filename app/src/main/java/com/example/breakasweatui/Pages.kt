@@ -1,13 +1,18 @@
 package com.example.breakasweatui
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+
+val db = WorkoutDatabase.getInstance(null)
+val workoutDao = db.workoutDao()
 
 
 @Composable
@@ -25,9 +30,18 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomText(xText = "Welcome to Break a Sweat")
-        CustomElevatedButton(xText = "Start Workout", xOnClick = navBegin,
-            modifier = Modifier.height(100.dp).width(300.dp))
-        CustomElevatedButton(xText = "Workout History", xOnClick = navHistory, modifier = Modifier.padding(top=40.dp))
+        CustomElevatedButton(
+            xText = "Start Workout",
+            xOnClick = navBegin,
+            modifier = Modifier
+                .height(100.dp)
+                .width(300.dp)
+        )
+        CustomElevatedButton(
+            xText = "Workout History",
+            xOnClick = navHistory,
+            modifier = Modifier.padding(top = 40.dp)
+        )
         CustomElevatedButton(xText = "Edit Workouts", xOnClick = navModify)
     }
 }
@@ -158,7 +172,8 @@ fun WorkoutHistory(
 }
 
 @Composable
-fun ModifyRoutine(                                                                  // Edit Workout
+fun ModifyRoutine(
+    // Edit Workout
     modifier: Modifier = Modifier,
     navHome: () -> Unit,
     openDrawer: () -> Unit,
@@ -170,9 +185,15 @@ fun ModifyRoutine(                                                              
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         CustomText("Edit Workout Routine")
-        val exercises = PopulateData()
+        var exercises = workoutDao.getAll()
+        CustomText(xText = exercises[0].name)
         ExerciseEditList(exercises = exercises)
+        CustomElevatedButton(xText = "Add one", xOnClick = {
+            workoutDao.insertAll(Workout(name = "Vigg", sets = 3, reps = 10, weight = 15))
+            exercises = workoutDao.getAll()
+        })
         CustomElevatedButton(xText = "Home", xOnClick = navHome)
     }
 }
