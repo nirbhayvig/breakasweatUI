@@ -42,7 +42,9 @@ fun PopulateData(): List<Exercise> {
 
 @Composable
 fun CustomElevatedButton(
-    xText: String, xOnClick: () -> Unit, modifier: Modifier = Modifier.padding(vertical = 12.dp),
+    xText: String,
+    xOnClick: () -> Unit,
+    modifier: Modifier = Modifier.padding(vertical = 12.dp),
     color: ButtonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
 ) {
     ElevatedButton(modifier = modifier, onClick = xOnClick, colors = color) {
@@ -57,11 +59,22 @@ fun CustomElevatedButtonWithSubtext(
     xOnClick: () -> Unit,
     modifier: Modifier = Modifier.padding(vertical = 12.dp)
 ) {
-    ElevatedButton(modifier = modifier, onClick = xOnClick,
-        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiaryContainer)) {
+    ElevatedButton(
+        modifier = modifier,
+        onClick = xOnClick,
+        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiaryContainer)
+    ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(xText, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onTertiaryContainer)
-            Text(xSubText, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onTertiaryContainer)
+            Text(
+                xText,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+            Text(
+                xSubText,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
         }
     }
 }
@@ -119,39 +132,56 @@ fun ExerciseButton(
 }
 
 @Composable
-fun ExerciseEditList(
-    exercises: List<Workout>,
-    modifier: Modifier = Modifier
+fun WorkoutList(
+    exercises: List<Workout>, modifier: Modifier = Modifier, update: (Workout) -> Unit
 ) {
-
     LazyColumn(
         modifier = Modifier
             .border(
-                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(10.dp)
+                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
             )
             .height(300.dp)
             .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         items(exercises.size) { i ->
-            TextEdit(exercises[i].name)
+            WorkoutButton(exercise = exercises[i], update)
         }
     }
 }
 
 @Composable
-fun TextEdit(
-    defaultText: String = "",
-    modifier: Modifier = Modifier
+fun WorkoutButton(
+    exercise: Workout,
+    update: (Workout) -> Unit
 ) {
-    var inputText by rememberSaveable{ mutableStateOf(defaultText) }
+    val exerciseSubText: String =
+        "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
+    CustomElevatedButtonWithSubtext(
+        xText = exercise.name,
+        xSubText = exerciseSubText,
+        xOnClick = {  update(exercise) },
+        modifier = Modifier
+            .padding(vertical = 6.dp, horizontal = 5.dp)
+            .width(200.dp)
+    )
+
+}
+
+@Composable
+fun TextEdit(
+    defaultText: String = "", modifier: Modifier = Modifier
+) {
+    var inputText by rememberSaveable { mutableStateOf(defaultText) }
 
 //    val exerciseSubText: String =
 //        "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
 //    CustomText(xText = exercise.name)
 //    CustomText(xText = exerciseSubText)
 
-    OutlinedTextField(value = inputText, onValueChange = { inputText = it }, label = { Text(defaultText)})
+    OutlinedTextField(
+        value = inputText,
+        onValueChange = { inputText = it },
+        label = { Text(defaultText) })
 }
 
 

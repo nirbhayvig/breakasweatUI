@@ -20,7 +20,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.Icon
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.room.Room
+import androidx.room.Update
 import kotlinx.coroutines.launch
 import com.example.breakasweatui.*
 
@@ -58,8 +61,7 @@ class MainActivity : ComponentActivity() {
                     drawerState.open()
                 }
             }
-            NavigationDrawer(
-                drawerState = drawerState,
+            NavigationDrawer(drawerState = drawerState,
                 gesturesEnabled = drawerState.isOpen,
                 drawerContent = {
                     Drawer(onDestinationClicked = { route ->
@@ -97,7 +99,10 @@ class MainActivity : ComponentActivity() {
                     composable("ModifyRoutine") {
                         ModifyRoutine(navHome = { navController.navigate("Home") },
                             openDrawer = { openDrawer() },
-                            addNew = { navController.navigate("AddNew") })
+                            addNew = { navController.navigate("AddNew") },
+                            update = { workout: Workout ->
+                                navController.navigate("update/${workout.uid}")
+                            } )
                     }
                     composable("Resting") {
                         Resting(navNext = { navController.navigate("CompletedWorkout") },
@@ -115,8 +120,17 @@ class MainActivity : ComponentActivity() {
                             navBack = { navController.popBackStack() })
                     }
                     composable("AddNew") {
-                        AddNewWorkout(navBack = { navController.navigate("ModifyRoutine") },
-                            addNew = { navController.navigate("ModifyRoutine") })
+                        AddNewWorkout(navBack = { navController.navigate("ModifyRoutine") })
+                    }
+                    composable(
+                        "update/{workoutId}",
+                        arguments = listOf(navArgument("workoutId") {type = NavType.IntType})
+                    ) {
+                        backStackEntry ->
+                        UpdateWorkout(
+                            navBack = { navController.navigate("ModifyRoutine") },
+                            workout = workoutDao.findById(backStackEntry.arguments!!.getInt("workoutId"))
+                        )
                     }
                 }
             }

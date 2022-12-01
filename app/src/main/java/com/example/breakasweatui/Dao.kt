@@ -22,6 +22,9 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout")
     fun getAll(): List<Workout>
 
+    @Query("SELECT * FROM workout WHERE uid = :id")
+    fun findById(id: Int): Workout
+
     @Insert
     fun insertAll(vararg workout: Workout)
 
