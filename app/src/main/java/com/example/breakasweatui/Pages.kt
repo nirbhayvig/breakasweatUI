@@ -1,20 +1,11 @@
 package com.example.breakasweatui
 
-import androidx.activity.ComponentActivity
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -70,10 +61,10 @@ fun BeginningWorkout(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val exercises = PopulateData()
+        val exercises = workoutDao.getAll()
         CustomText(xText = "Begin Workout:")
         CustomText(xText = "Exercises for today:")
-        ExerciseList(exercises = exercises)
+        WorkoutViewList(exercises = exercises)
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -92,7 +83,7 @@ fun BeginningWorkout(
 
 @Composable
 fun DuringWorkout(
-    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
+    navNext: () -> Unit, navResting: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -102,6 +93,8 @@ fun DuringWorkout(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomText(xText = "DuringWorkout:")
+        val exercises = workoutDao.getAll()
+        WorkoutToggleList(exercises = exercises)
 
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -207,9 +200,9 @@ fun ModifyRoutine(
     navHome: () -> Unit,
     openDrawer: () -> Unit,
     addNew: () -> Unit,
+    update: (Workout) -> Unit
 ) {
     NavBar(onButtonClicked = openDrawer)
-
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -219,14 +212,29 @@ fun ModifyRoutine(
         CustomText("Edit Workout Routine")
         val workoutList = workoutDao.getAll()
         var exercises by remember { mutableStateOf(workoutList) }
-        ExerciseEditList(exercises = exercises)
+        WorkoutEditList(exercises = exercises, update = update)
 
         CustomElevatedButton(
-            xText = "Add new", xOnClick = addNew, modifier = Modifier.padding(6.dp)
+            xText = "Add new workout", xOnClick = addNew, modifier = Modifier.padding(6.dp)
         )
 
+        CustomElevatedButton(
+            xText = "Add new rest",
+            xOnClick = {
+                workoutDao.insertAll(
+                    Workout(
+                        name = "Resting",
+                        reps = null,
+                        sets = null,
+                        weight = null
+                    )
+                )
+                exercises = workoutDao.getAll()
+            },
+            modifier = Modifier.padding(6.dp)
+        )
         CustomElevatedButton(xText = "Delete All", xOnClick = {
-            var workoutsToDelete = workoutDao.getAll()
+            val workoutsToDelete = workoutDao.getAll()
             for (workout in workoutsToDelete) {
                 workoutDao.delete(workout)
                 exercises = workoutDao.getAll()
@@ -238,15 +246,13 @@ fun ModifyRoutine(
 
 @Composable
 fun AddNewWorkout(
-    navBack: () -> Unit, addNew: () -> Unit, modifier: Modifier = Modifier
+    navBack: () -> Unit, modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val popupWidth = 300.dp
-        val popupHeight = 100.dp
         var exerciseInput by remember { mutableStateOf("") }
         var setsInput by remember { mutableStateOf("") }
         var repsInput by remember { mutableStateOf("") }
@@ -270,16 +276,78 @@ fun AddNewWorkout(
             label = { Text(text = "Weight in pounds") })
 
         CustomElevatedButton(xText = "Back", xOnClick = navBack)
-        CustomElevatedButton(xText = "Add new workout", xOnClick = {
-            workoutDao.insertAll(
-                Workout(
-                    name = exerciseInput,
-                    reps = repsInput.toInt(),
-                    sets = setsInput.toInt(),
-                    weight = weightInput.toInt()
+        if (!isSaved) {
+            CustomElevatedButton(xText = "Add new workout", xOnClick = {
+                workoutDao.insertAll(
+                    Workout(
+                        name = exerciseInput,
+                        reps = repsInput.toInt(),
+                        sets = setsInput.toInt(),
+                        weight = weightInput.toInt()
+                    )
                 )
+                isSaved = true
+            })
+        } else {
+            CustomText(
+                xText = "Workout has been saved! Please return to previous menu",
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-        })
+        }
+    }
+}
+
+
+@Composable
+fun UpdateWorkout(
+    navBack: () -> Unit, workout: Workout, modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        var exerciseInput by remember { mutableStateOf(workout.name) }
+        var setsInput by remember { mutableStateOf(workout.sets.toString()) }
+        var repsInput by remember { mutableStateOf(workout.reps.toString()) }
+        var weightInput by remember { mutableStateOf(workout.weight.toString()) }
+        var isSaved by remember { mutableStateOf(false) }
+        TextField(value = exerciseInput,
+            onValueChange = { exerciseInput = it },
+            label = { Text(text = "Exercise") })
+        TextField(value = repsInput,
+            onValueChange = { repsInput = it },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            label = { Text(text = "Number of repetitions") })
+        TextField(value = setsInput,
+            onValueChange = { setsInput = it },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            label = { Text(text = "Number of sets") })
+        TextField(value = weightInput,
+            onValueChange = { weightInput = it },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            label = { Text(text = "Weight in pounds") })
+
+        CustomElevatedButton(xText = "Back", xOnClick = navBack)
+        if (!isSaved) {
+            CustomElevatedButton(xText = "Add new workout", xOnClick = {
+                workoutDao.updateUsers(
+                    Workout(
+                        uid = workout.uid,
+                        name = exerciseInput,
+                        reps = repsInput.toInt(),
+                        sets = setsInput.toInt(),
+                        weight = weightInput.toInt()
+                    )
+                )
+                isSaved = true
+            })
+        } else {
+            CustomText(
+                xText = "Workout has been saved! Please return to previous menu",
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+        }
     }
 }
 
