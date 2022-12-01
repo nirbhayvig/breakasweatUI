@@ -91,7 +91,7 @@ fun BeginningWorkout(
 }
 
 @Composable
-fun DuringWorkout(
+fun DuringWorkout1(
     navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
@@ -101,7 +101,8 @@ fun DuringWorkout(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CustomText(xText = "DuringWorkout:")
+        CustomText(xText = "Current Workout:  ")
+        CustomText(xText = "Bicep Curls")
 
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -117,7 +118,7 @@ fun DuringWorkout(
 }
 
 @Composable
-fun Resting(
+fun Resting1(
     navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
@@ -146,7 +147,150 @@ fun Resting(
             horizontalArrangement = Arrangement.Center
         ) {
             CustomText("Next Up:   ")
-            CustomText("Exercise 3")
+            CustomText("Bench Press")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
+            Spacer(modifier = Modifier.width(24.dp))
+            CustomElevatedButton(xText = "Continue", xOnClick = navNext)
+        }
+    }
+}
+
+@Composable
+fun DuringWorkout2(
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
+) {
+    NavBar(onButtonClicked = openDrawer)
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CustomText(xText = "Current Workout:  ")
+        CustomText(xText = "Bench Press")
+
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
+            Spacer(modifier = Modifier.width(24.dp))
+            CustomElevatedButton(xText = "Next", xOnClick = navNext)
+        }
+    }
+}
+
+@Composable
+fun Resting2(
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
+) {
+    NavBar(onButtonClicked = openDrawer)
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Timer(
+                totalTime = 100L * 1000L,
+                handleColor = Color.Green,
+                inactiveBarColor = Color.DarkGray,
+                activeBarColor = Color(0xFF37B900),
+                modifier = Modifier.size(200.dp)
+            )
+        }
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomText("Next Up:   ")
+            CustomText("Deadlift")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
+            Spacer(modifier = Modifier.width(24.dp))
+            CustomElevatedButton(xText = "Continue", xOnClick = navNext)
+        }
+    }
+}
+
+@Composable
+fun DuringWorkout3(
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
+) {
+    NavBar(onButtonClicked = openDrawer)
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CustomText(xText = "Current Workout:  ")
+        CustomText(xText = "Deadlift")
+
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomElevatedButton(xText = "Back", xOnClick = navBack)
+            Spacer(modifier = Modifier.width(24.dp))
+            CustomElevatedButton(xText = "Next", xOnClick = navNext)
+        }
+    }
+}
+
+@Composable
+fun Resting3(
+    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
+) {
+    NavBar(onButtonClicked = openDrawer)
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Timer(
+                totalTime = 100L * 1000L,
+                handleColor = Color.Green,
+                inactiveBarColor = Color.DarkGray,
+                activeBarColor = Color(0xFF37B900),
+                modifier = Modifier.size(200.dp)
+            )
+        }
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomText("Final Exercise!")
         }
         Spacer(modifier = Modifier.height(24.dp))
         Row(
