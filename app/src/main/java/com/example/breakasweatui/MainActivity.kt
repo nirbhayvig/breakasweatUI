@@ -37,7 +37,9 @@ class MainActivity : ComponentActivity() {
         }
         val db = WorkoutDatabase.getInstance(applicationContext)
         val workoutDao = db.workoutDao()
-        workoutDao.insertAll(Workout(name = "INIT", sets = 3, reps = 10, weight = 15))
+        if(workoutDao.getAll().isEmpty()){
+            workoutDao.insertAll(Workout(name = "INIT", sets = 3, reps = 10, weight = 15))
+        }
     }
 
 

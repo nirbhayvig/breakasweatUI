@@ -115,6 +115,7 @@ fun ExerciseButton(
             .padding(vertical = 6.dp, horizontal = 5.dp)
             .width(200.dp)
     )
+
 }
 
 @Composable
@@ -126,32 +127,34 @@ fun ExerciseEditList(
     LazyColumn(
         modifier = Modifier
             .border(
-                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
+                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(10.dp)
             )
             .height(300.dp)
             .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         items(exercises.size) { i ->
-            ExerciseTextEdit(exercises[i])
+            TextEdit(exercises[i].name)
         }
     }
 }
 
 @Composable
-fun ExerciseTextEdit(
-    workout: Workout,
+fun TextEdit(
+    defaultText: String = "",
     modifier: Modifier = Modifier
 ) {
-    var inputText by rememberSaveable{ mutableStateOf(workout.name) }
+    var inputText by rememberSaveable{ mutableStateOf(defaultText) }
 
 //    val exerciseSubText: String =
 //        "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
 //    CustomText(xText = exercise.name)
 //    CustomText(xText = exerciseSubText)
 
-    OutlinedTextField(value = inputText, onValueChange = { inputText = it }, label = { Text("Label")})
+    OutlinedTextField(value = inputText, onValueChange = { inputText = it }, label = { Text(defaultText)})
 }
+
+
 
 
 

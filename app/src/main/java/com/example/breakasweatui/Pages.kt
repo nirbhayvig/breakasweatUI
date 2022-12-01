@@ -1,15 +1,22 @@
 package com.example.breakasweatui
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import com.example.breakasweatui.ui.theme.*
 
 val db = WorkoutDatabase.getInstance(null)
 val workoutDao = db.workoutDao()
@@ -187,15 +194,64 @@ fun ModifyRoutine(
     ) {
 
         CustomText("Edit Workout Routine")
-        var exercises = workoutDao.getAll()
-        CustomText(xText = exercises[0].name)
-        ExerciseEditList(exercises = exercises)
-        CustomElevatedButton(xText = "Add one", xOnClick = {
-            workoutDao.insertAll(Workout(name = "Vigg", sets = 3, reps = 10, weight = 15))
-            exercises = workoutDao.getAll()
-        })
-        CustomElevatedButton(xText = "Home", xOnClick = navHome)
+        val workoutList = workoutDao.getAll()
+        var exercises by remember { mutableStateOf(workoutList) }
+//        ExerciseEditList(exercises = exercises)
+
+        AddNewWorkout(exercises)
+
+        CustomElevatedButton(xText = "Delete All", xOnClick = {
+            var workoutsToDelete = workoutDao.getAll()
+            for (workout in workoutsToDelete) {
+                workoutDao.delete(workout)
+                exercises = workoutDao.getAll()
+            }
+        }, modifier = Modifier.padding(6.dp))
+        CustomElevatedButton(xText = "Home", xOnClick = navHome, modifier = Modifier.padding(6.dp))
     }
+}
+
+@Composable
+fun AddNewWorkout(
+    exercises: List<Workout>,
+    modifier: Modifier = Modifier
+) {
+    var addNew by remember { mutableStateOf(false)}
+    val popupWidth = 300.dp
+    val popupHeight = 100.dp
+
+    CustomElevatedButton(
+        xText = "Add new", xOnClick = {
+            workoutDao.insertAll(Workout(name = "Vigg", sets = 3, reps = 10, weight = 15))
+            var exercises = workoutDao.getAll()
+            addNew = true
+        }, modifier = Modifier.padding(6.dp)
+    )
+    if(addNew) {
+        Popup(
+            onDismissRequest = { addNew = false },
+            alignment = Alignment.Center
+        ) {
+            Box(
+                Modifier
+                    .size(popupWidth, popupHeight)
+                    .padding(top = 5.dp)
+                    .background(DarkColors.background)
+                    .border(BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(10.dp))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    TextEdit(defaultText = "Exercise")
+                }
+            }
+        }
+    }
+
 }
 
 @Composable
