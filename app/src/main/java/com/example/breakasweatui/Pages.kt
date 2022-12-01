@@ -19,6 +19,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.example.breakasweatui.ui.theme.*
+import android.view.Surface
+import androidx.activity.compose.setContent
 
 val db = WorkoutDatabase.getInstance(null)
 val workoutDao = db.workoutDao()
@@ -125,9 +127,27 @@ fun Resting(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CustomText("Resting:")
-        CustomText("Next up:")
-        CustomText("Exercise 3")
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Timer(
+                        totalTime = 100L * 1000L,
+                        handleColor = Color.Green,
+                        inactiveBarColor = Color.DarkGray,
+                        activeBarColor = Color(0xFF37B900),
+                        modifier = Modifier.size(200.dp)
+                    )
+        }
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomText("Next Up:   ")
+            CustomText("Exercise 3")
+        }
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
