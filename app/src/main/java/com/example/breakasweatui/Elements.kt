@@ -239,38 +239,6 @@ fun SuperSimpleLineChart(
 }
 
 
-@Composable
-fun SuperSimpleLineChartWithLabels() {
-    Column(
-        Modifier
-            .padding(25.dp)
-            .border(width = 1.dp, color = Color.Black)
-            .padding(5.dp)
-            .width(IntrinsicSize.Min)
-    ) {
-        SuperSimpleLineChart()
-        Text(
-            modifier = Modifier.rotate(-90f),
-            text = "vertical text"
-        )
-        Row(Modifier.height(IntrinsicSize.Min)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Max Y")
-
-            }
-
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(modifier = Modifier.rotate(-90f),
-                text = "vertical text 2")
-            Text( "Max Y")
-        }
-    }
-}
 
 
 
