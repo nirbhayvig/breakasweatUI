@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.example.breakasweatui.ui.theme.*
@@ -184,6 +186,7 @@ fun ModifyRoutine(
     modifier: Modifier = Modifier,
     navHome: () -> Unit,
     openDrawer: () -> Unit,
+    addNew: () -> Unit,
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -196,9 +199,11 @@ fun ModifyRoutine(
         CustomText("Edit Workout Routine")
         val workoutList = workoutDao.getAll()
         var exercises by remember { mutableStateOf(workoutList) }
-//        ExerciseEditList(exercises = exercises)
+        ExerciseEditList(exercises = exercises)
 
-        AddNewWorkout(exercises)
+        CustomElevatedButton(
+            xText = "Add new", xOnClick = addNew, modifier = Modifier.padding(6.dp)
+        )
 
         CustomElevatedButton(xText = "Delete All", xOnClick = {
             var workoutsToDelete = workoutDao.getAll()
@@ -213,46 +218,51 @@ fun ModifyRoutine(
 
 @Composable
 fun AddNewWorkout(
-    exercises: List<Workout>,
-    modifier: Modifier = Modifier
+    navBack: () -> Unit, addNew: () -> Unit, modifier: Modifier = Modifier
 ) {
-    var addNew by remember { mutableStateOf(false)}
-    val popupWidth = 300.dp
-    val popupHeight = 100.dp
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val popupWidth = 300.dp
+        val popupHeight = 100.dp
+        var exerciseInput by remember { mutableStateOf("") }
+        var setsInput by remember { mutableStateOf("") }
+        var repsInput by remember { mutableStateOf("") }
+        var weightInput by remember { mutableStateOf("") }
+        var isSaved by remember { mutableStateOf(false) }
 
-    CustomElevatedButton(
-        xText = "Add new", xOnClick = {
-            workoutDao.insertAll(Workout(name = "Vigg", sets = 3, reps = 10, weight = 15))
-            var exercises = workoutDao.getAll()
-            addNew = true
-        }, modifier = Modifier.padding(6.dp)
-    )
-    if(addNew) {
-        Popup(
-            onDismissRequest = { addNew = false },
-            alignment = Alignment.Center
-        ) {
-            Box(
-                Modifier
-                    .size(popupWidth, popupHeight)
-                    .padding(top = 5.dp)
-                    .background(DarkColors.background)
-                    .border(BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(10.dp))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    TextEdit(defaultText = "Exercise")
-                }
-            }
-        }
+        TextField(value = exerciseInput,
+            onValueChange = { exerciseInput = it },
+            label = { Text(text = "Exercise") })
+        TextField(value = repsInput,
+            onValueChange = { repsInput = it },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            label = { Text(text = "Number of repetitions") })
+        TextField(value = setsInput,
+            onValueChange = { setsInput = it },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            label = { Text(text = "Number of sets") })
+        TextField(value = weightInput,
+            onValueChange = { weightInput = it },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            label = { Text(text = "Weight in pounds") })
+
+        CustomElevatedButton(xText = "Back", xOnClick = navBack)
+        CustomElevatedButton(xText = "Add new workout", xOnClick = {
+            workoutDao.insertAll(
+                Workout(
+                    name = exerciseInput,
+                    reps = repsInput.toInt(),
+                    sets = setsInput.toInt(),
+                    weight = weightInput.toInt()
+                )
+            )
+        })
     }
-
 }
+
 
 @Composable
 fun Settings(
