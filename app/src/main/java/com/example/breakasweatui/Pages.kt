@@ -125,18 +125,34 @@ fun DuringWorkout(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
+
             CustomElevatedButton(xText = "Previous", xOnClick = {
-                activeWorkout = decrementToggle(exercises, activeWorkout)!!
-                exercises = workoutDao.getAll()
-                navBack()
+                if(isFirst(exercises, activeWorkout)){
+                    navCancel()
+                } else if (activeWorkout.name == "Resting"){
+                    activeWorkout = decrementToggle(exercises, activeWorkout)!!
+                    exercises = workoutDao.getAll()
+                    navNext()
+                } else {
+                    activeWorkout = decrementToggle(exercises, activeWorkout)!!
+                    exercises = workoutDao.getAll()
+                    navBack()
+                }
             })
+
             Spacer(modifier = Modifier.width(24.dp))
+
+
             CustomElevatedButton(xText = "Next", xOnClick = {
                 exercises = workoutDao.getAll()
                 if (activeWorkout.name == "Resting") {
-                    activeWorkout = incrementToggle(exercises, activeWorkout)!!
-                    navResting()
-                } else if (isLast(exercises, activeWorkout)){
+                    if(isLast(exercises,activeWorkout)) {
+                        navDone()
+                    } else {
+                        activeWorkout = incrementToggle(exercises, activeWorkout)!!
+                        navResting()
+                    }
+                } else if (isLast(exercises, activeWorkout)) {
                     navDone()
                 } else {
                     activeWorkout = incrementToggle(exercises, activeWorkout)!!
@@ -152,6 +168,7 @@ fun DuringWorkout(
 
     }
 }
+
 fun isLast(
     exercises: List<Workout>, currentActive: Workout
 ): Boolean {
@@ -163,6 +180,18 @@ fun isLast(
     }
     return index + 1 == exercises.size
 }
+fun isFirst(
+    exercises: List<Workout>, currentActive: Workout
+): Boolean {
+    var index = -1
+    for (exercise in exercises) {
+        if (exercise.equals(currentActive)) {
+            index = exercises.indexOf(exercise)
+        }
+    }
+    return index == 0
+}
+
 fun getActive(
     exercises: List<Workout>
 ): Workout? {
@@ -226,7 +255,7 @@ fun decrementToggle(
             index = exercises.indexOf(exercise)
         }
     }
-    if (index >= 0 && index < exercises.size - 1) {
+    if (index > 0 && index < exercises.size) {
         val prevActive = currentActive
         prevActive.isActive = false
         prevActive.isCompleted = false

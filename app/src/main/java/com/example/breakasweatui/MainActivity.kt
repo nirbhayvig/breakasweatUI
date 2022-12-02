@@ -70,7 +70,8 @@ class MainActivity : ComponentActivity() {
                     drawerState.open()
                 }
             }
-            NavigationDrawer(drawerState = drawerState,
+            NavigationDrawer(
+                drawerState = drawerState,
                 gesturesEnabled = drawerState.isOpen,
                 drawerContent = {
                     Drawer(onDestinationClicked = { route ->
@@ -92,7 +93,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("BeginningWorkout") {
                         BeginningWorkout(navDuring = { navController.navigate("DuringWorkout") },
-                            navBack = { navController.popBackStack() },
+                            navBack = { navController.navigate("Home") },
                             openDrawer = { openDrawer() })
                     }
                     composable("DuringWorkout") {
@@ -101,7 +102,7 @@ class MainActivity : ComponentActivity() {
                             navBack = { navController.popBackStack() },
                             openDrawer = { openDrawer() },
                             navDone = { navController.navigate("CompletedWorkout") },
-                            navCancel = { navController.navigate("BeginningWorkout")})
+                            navCancel = { navController.navigate("BeginningWorkout") })
                     }
                     composable("WorkoutHistory") {
                         WorkoutHistory(navHome = { navController.navigate("Home") },
