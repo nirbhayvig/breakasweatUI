@@ -497,7 +497,7 @@ fun UpdateWorkout(
 
         CustomElevatedButton(xText = "Back", xOnClick = navBack)
         if (!isSaved) {
-            CustomElevatedButton(xText = "Add new workout", xOnClick = {
+            CustomElevatedButton(xText = "Update workout", xOnClick = {
                 workoutDao.updateUsers(
                     Workout(
                         uid = workout.uid,
