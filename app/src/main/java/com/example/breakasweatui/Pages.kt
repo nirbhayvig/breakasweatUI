@@ -345,13 +345,14 @@ fun WorkoutHistory(
     modifier: Modifier = Modifier, navHome: () -> Unit, openDrawer: () -> Unit, navBack: () -> Unit
 ) {
     NavBar(onButtonClicked = openDrawer)
-
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomText("Workout History")
+        CustomText("Bicep Curls")
+        SuperSimpleLineChart()
         CustomElevatedButton(xText = "Home", xOnClick = navHome)
         CustomElevatedButton(xText = "Back", xOnClick = navBack)
     }
