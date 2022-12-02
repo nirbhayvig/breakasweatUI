@@ -1,6 +1,10 @@
 package com.example.breakasweatui
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -8,10 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
-import com.example.breakasweatui.ui.theme.*
-import android.view.Surface
-import androidx.activity.compose.setContent
+import androidx.compose.ui.graphics.Color
 
 val db = WorkoutDatabase.getInstance(null)
 val workoutDao = db.workoutDao()
@@ -62,6 +63,7 @@ fun BeginningWorkout(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val exercises = workoutDao.getAll()
+        resetToggle(exercises)
         CustomText(xText = "Begin Workout:")
         CustomText(xText = "Exercises for today:")
         WorkoutViewList(exercises = exercises)
@@ -83,7 +85,13 @@ fun BeginningWorkout(
 
 @Composable
 fun DuringWorkout(
-    navNext: () -> Unit, navResting: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
+    navNext: () -> Unit,
+    navResting: () -> Unit,
+    navBack: () -> Unit,
+    openDrawer: () -> Unit,
+    navDone: () -> Unit,
+    navCancel: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -93,8 +101,23 @@ fun DuringWorkout(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomText(xText = "DuringWorkout:")
-        val exercises = workoutDao.getAll()
-        WorkoutToggleList(exercises = exercises)
+        val workoutList = workoutDao.getAll()
+        var exercises by remember { mutableStateOf(workoutList) }
+        var activeWorkout by remember { mutableStateOf(getActive(exercises)!!) }
+
+
+        LazyColumn(
+            modifier = Modifier
+                .border(
+                    BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
+                )
+                .height(300.dp)
+                .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            items(exercises.size) { i ->
+                WorkoutToggleButton(exercise = exercises[i])
+            }
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -102,12 +125,124 @@ fun DuringWorkout(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
-            CustomElevatedButton(xText = "Back", xOnClick = navBack)
+            CustomElevatedButton(xText = "Previous", xOnClick = {
+                activeWorkout = decrementToggle(exercises, activeWorkout)!!
+                exercises = workoutDao.getAll()
+                navBack()
+            })
             Spacer(modifier = Modifier.width(24.dp))
-            CustomElevatedButton(xText = "Next", xOnClick = navNext)
+            CustomElevatedButton(xText = "Next", xOnClick = {
+                exercises = workoutDao.getAll()
+                if (activeWorkout.name == "Resting") {
+                    activeWorkout = incrementToggle(exercises, activeWorkout)!!
+                    navResting()
+                } else if (isLast(exercises, activeWorkout)){
+                    navDone()
+                } else {
+                    activeWorkout = incrementToggle(exercises, activeWorkout)!!
+                    navNext()
+                }
+            })
         }
+        CustomElevatedButton(xText = "Cancel Workout", xOnClick = {
+            resetToggle(exercises)
+            exercises = workoutDao.getAll()
+            navCancel()
+        })
+
     }
 }
+fun isLast(
+    exercises: List<Workout>, currentActive: Workout
+): Boolean {
+    var index = -1
+    for (exercise in exercises) {
+        if (exercise.equals(currentActive)) {
+            index = exercises.indexOf(exercise)
+        }
+    }
+    return index + 1 == exercises.size
+}
+fun getActive(
+    exercises: List<Workout>
+): Workout? {
+    for (exercise in exercises) {
+        if (exercise.isActive) {
+            return exercise
+        }
+    }
+    return null
+}
+
+fun resetToggle(
+    exercises: List<Workout>
+) {
+    for (exercise in exercises) {
+        if (exercise == exercises[0]) {
+            exercise.isCompleted = false
+            exercise.isActive = true
+            workoutDao.updateUsers(exercise)
+        } else {
+            exercise.isCompleted = false
+            exercise.isActive = false
+            workoutDao.updateUsers(exercise)
+        }
+    }
+    return
+}
+
+fun incrementToggle(
+    exercises: List<Workout>, currentActive: Workout
+): Workout? {
+    var index = -1
+    for (exercise in exercises) {
+        if (exercise.equals(currentActive)) {
+            index = exercises.indexOf(exercise)
+        }
+    }
+    if (index >= 0 && index < exercises.size - 1) {
+        val prevActive = currentActive
+        prevActive.isActive = false
+        prevActive.isCompleted = true
+        workoutDao.updateUsers(prevActive)
+
+        val nextActive = exercises[index.inc()]
+        nextActive.isActive = true
+        nextActive.isCompleted = false
+        workoutDao.updateUsers(nextActive)
+        return nextActive
+    } else {
+        return null
+    }
+
+}
+
+fun decrementToggle(
+    exercises: List<Workout>, currentActive: Workout
+): Workout? {
+    var index = -1
+    for (exercise in exercises) {
+        if (exercise.equals(currentActive)) {
+            index = exercises.indexOf(exercise)
+        }
+    }
+    if (index >= 0 && index < exercises.size - 1) {
+        val prevActive = currentActive
+        prevActive.isActive = false
+        prevActive.isCompleted = false
+        workoutDao.updateUsers(prevActive)
+
+        val nextActive = exercises[index.dec()]
+        nextActive.isActive = true
+        nextActive.isCompleted = false
+        workoutDao.updateUsers(nextActive)
+        return nextActive
+    } else {
+        return null
+    }
+
+}
+
 
 @Composable
 fun Resting(
@@ -126,12 +261,12 @@ fun Resting(
             horizontalArrangement = Arrangement.Center
         ) {
             Timer(
-                        totalTime = 100L * 1000L,
-                        handleColor = Color.Green,
-                        inactiveBarColor = Color.DarkGray,
-                        activeBarColor = Color(0xFF37B900),
-                        modifier = Modifier.size(200.dp)
-                    )
+                totalTime = 100L * 1000L,
+                handleColor = Color.Green,
+                inactiveBarColor = Color.DarkGray,
+                activeBarColor = Color(0xFF37B900),
+                modifier = Modifier.size(200.dp)
+            )
         }
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -219,19 +354,19 @@ fun ModifyRoutine(
         )
 
         CustomElevatedButton(
-            xText = "Add new rest",
-            xOnClick = {
+            xText = "Add new rest", xOnClick = {
                 workoutDao.insertAll(
                     Workout(
                         name = "Resting",
                         reps = null,
                         sets = null,
-                        weight = null
+                        weight = null,
+                        isActive = false,
+                        isCompleted = false
                     )
                 )
                 exercises = workoutDao.getAll()
-            },
-            modifier = Modifier.padding(6.dp)
+            }, modifier = Modifier.padding(6.dp)
         )
         CustomElevatedButton(xText = "Delete All", xOnClick = {
             val workoutsToDelete = workoutDao.getAll()
@@ -283,7 +418,9 @@ fun AddNewWorkout(
                         name = exerciseInput,
                         reps = repsInput.toInt(),
                         sets = setsInput.toInt(),
-                        weight = weightInput.toInt()
+                        weight = weightInput.toInt(),
+                        isActive = false,
+                        isCompleted = false
                     )
                 )
                 isSaved = true
@@ -337,7 +474,9 @@ fun UpdateWorkout(
                         name = exerciseInput,
                         reps = repsInput.toInt(),
                         sets = setsInput.toInt(),
-                        weight = weightInput.toInt()
+                        weight = weightInput.toInt(),
+                        isActive = false,
+                        isCompleted = false
                     )
                 )
                 isSaved = true

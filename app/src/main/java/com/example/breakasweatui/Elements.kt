@@ -1,8 +1,5 @@
 package com.example.breakasweatui
 
-import android.widget.EditText
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -13,28 +10,15 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.breakasweatui.ui.theme.BreakaSweatUITheme
-import androidx.activity.compose.setContent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -45,9 +29,6 @@ import kotlinx.coroutines.delay
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
-
-
-data class Exercise(val name: String, val reps: Int?, val sets: Int?, val weight: Int?)
 
 @Composable
 fun CustomElevatedButton(
@@ -66,12 +47,11 @@ fun CustomElevatedButtonWithSubtext(
     xText: String,
     xSubText: String,
     xOnClick: () -> Unit,
-    modifier: Modifier = Modifier.padding(vertical = 12.dp)
+    modifier: Modifier = Modifier.padding(vertical = 12.dp),
+    color: ButtonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiaryContainer)
 ) {
     ElevatedButton(
-        modifier = modifier,
-        onClick = xOnClick,
-        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiaryContainer)
+        modifier = modifier, onClick = xOnClick, colors = color
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -132,29 +112,55 @@ fun WorkoutViewList(
     }
 }
 
-@Composable
-fun WorkoutToggleList(
-    exercises: List<Workout>, modifier: Modifier = Modifier
-) {
-    LazyColumn(
-        modifier = Modifier
-            .border(
-                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
-            )
-            .height(300.dp)
-            .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        items(exercises.size) { i ->
-            WorkoutToggleButton(exercise = exercises[i])
-        }
-    }
-}
+//@Composable
+//fun WorkoutToggleList(
+//    exercises: (List<Workout>) -> Unit,
+//    navNext: () -> Unit,
+//    navResting: () -> Unit,
+//    navBack: () -> Unit,
+//    modifier: Modifier = Modifier,
+//) {
+//    LazyColumn(
+//        modifier = Modifier
+//            .border(
+//                BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
+//            )
+//            .height(300.dp)
+//            .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        for (exercise in exercises) {
+//
+//        }
+//        items(exercises.size) { i ->
+//            WorkoutToggleButton(exercise = exercises[i])
+//        }
+//    }
+//
+//    Spacer(modifier = Modifier.height(24.dp))
+//    Row(
+//        modifier = modifier.fillMaxWidth(),
+//        verticalAlignment = Alignment.Bottom,
+//        horizontalArrangement = Arrangement.Center
+//    ) {
+//        CustomElevatedButton(xText = "Back", xOnClick = navBack)
+//        Spacer(modifier = Modifier.width(24.dp))
+//        CustomElevatedButton(xText = "Next", xOnClick = {  })
+//    }
+//}
 
 
 @Composable
 fun WorkoutToggleButton(
-    exercise: Workout
+    exercise: Workout,
 ) {
+    //  CHANGE THESE COLORS WITH PROPER COLORS
+    val color: ButtonColors = if (exercise.isActive) {
+        ButtonDefaults.buttonColors(MaterialTheme.colorScheme.errorContainer)
+    } else if (exercise.isCompleted) {
+        ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer)
+    } else {
+        ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
+    }
     val exerciseSubText: String =
         "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
     if (exercise.name == "Resting") {
@@ -163,7 +169,8 @@ fun WorkoutToggleButton(
             xOnClick = { },
             modifier = Modifier
                 .padding(vertical = 6.dp, horizontal = 5.dp)
-                .width(200.dp)
+                .width(200.dp),
+            color = color
         )
     } else {
         CustomElevatedButtonWithSubtext(
@@ -172,7 +179,8 @@ fun WorkoutToggleButton(
             xOnClick = { },
             modifier = Modifier
                 .padding(vertical = 6.dp, horizontal = 5.dp)
-                .width(200.dp)
+                .width(200.dp),
+            color = color
         )
     }
 
@@ -266,12 +274,10 @@ fun Timer(
     inactiveBarColor: Color,
 
     // color of active bar
-    activeBarColor: Color,
-    modifier: Modifier = Modifier,
+    activeBarColor: Color, modifier: Modifier = Modifier,
 
     // set initial value to 1
-    initialValue: Float = 1f,
-    strokeWidth: Dp = 5.dp
+    initialValue: Float = 1f, strokeWidth: Dp = 5.dp
 ) {
     // create variable for
     // size of the composable
@@ -291,19 +297,15 @@ fun Timer(
         mutableStateOf(false)
     }
     LaunchedEffect(key1 = currentTime, key2 = isTimerRunning) {
-        if(currentTime > 0 && isTimerRunning) {
+        if (currentTime > 0 && isTimerRunning) {
             delay(100L)
             currentTime -= 100L
             value = currentTime / totalTime.toFloat()
         }
     }
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .onSizeChanged {
-                size = it
-            }
-    ) {
+    Box(contentAlignment = Alignment.Center, modifier = modifier.onSizeChanged {
+        size = it
+    }) {
         // draw the timer
         Canvas(modifier = modifier) {
             // draw the inactive arc with following parameters
@@ -352,17 +354,16 @@ fun Timer(
         // create button to start or stop the timer
         Button(
             onClick = {
-                if(currentTime <= 0L) {
+                if (currentTime <= 0L) {
                     currentTime = totalTime
                     isTimerRunning = true
                 } else {
                     isTimerRunning = !isTimerRunning
                 }
-            },
-            modifier = Modifier.align(Alignment.BottomCenter),
+            }, modifier = Modifier.align(Alignment.BottomCenter),
             // change button color
             colors = ButtonDefaults.buttonColors(
-                  Color.Green
+                Color.Green
             )
         ) {
             Text(
