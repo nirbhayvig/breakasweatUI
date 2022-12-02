@@ -167,16 +167,16 @@ fun WorkoutHistory(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomText("Workout History")
-        CustomElevatedButton(xText = "Home", xOnClick = navHome)
-        CustomElevatedButton(xText = "Back", xOnClick = navBack)
+        CustomText("<            Bicep Curls            >")
+
+
         var addNew by remember { mutableStateOf(false)}
         val popupWidth = 300.dp
         val popupHeight = 100.dp
-        CustomElevatedButton(
-            xText = "Add new", xOnClick = {
-                addNew = true
-            }, modifier = Modifier.padding(6.dp)
-        )
+        SuperSimpleLineChart(xOnClick = {
+            addNew = true
+        })
+        CustomElevatedButton(xText = "Home", xOnClick = navHome)
         if(addNew) {
             Popup(
                 onDismissRequest = { addNew = false },
@@ -201,6 +201,8 @@ fun WorkoutHistory(
                 }
             }
         }
+        CustomElevatedButton(xText = "Back", xOnClick = navBack)
+
     }
 }
 

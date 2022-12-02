@@ -3,6 +3,7 @@ package com.example.breakasweatui
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -13,16 +14,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.breakasweatui.ui.theme.BreakaSweatUITheme
+import androidx.compose.ui.graphics.Color
 
 
 data class Exercise(val name: String, val reps: Int?, val sets: Int?, val weight: Int?)
@@ -113,6 +121,135 @@ fun ExerciseButton(
             .padding(vertical = 6.dp, horizontal = 5.dp)
             .width(200.dp)
     )
+}
+
+fun clickable(
+    onClick: (() -> Unit)? = null,
+    consumeDownOnStart: Boolean = false,
+    children: @Composable() () -> Unit
+) {
+
+}
+
+//point representation
+data class Point(val x: Float, val y: Float)
+
+@Composable
+fun SuperSimpleLineChart(
+    modifier: Modifier = Modifier,
+    yPoints: List<Float> = listOf(
+        445f, 400f, 320f, 330f, 270f, 150f
+    ),
+    graphColor: Color = Color.Green,
+    xOnClick: () -> Unit,
+) {
+
+    val spacing = 100f
+    Box(
+        modifier = Modifier
+            .padding(all = 20.dp)
+    ){
+        Canvas(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(190.dp)
+        ) {
+            rotate(degrees = -90f, Offset(230f, 240f)) {
+                drawIntoCanvas { canvas ->
+                    canvas.nativeCanvas.drawText(
+                        "Max Set (Pounds * Reps)",
+                        0f, 0.dp.toPx(),
+                        android.graphics.Paint().apply {
+                            textSize = 40f
+                        }
+                    )
+                }
+            }
+            drawIntoCanvas { canvas ->
+                canvas.nativeCanvas.drawText(
+                    "Date",
+                    775f, 205.dp.toPx(),
+                    android.graphics.Paint().apply {
+                        textSize = 40f
+                    }
+                )
+            }
+
+            drawRect(
+                color = Color.Black,
+                topLeft = Offset.Zero,
+                size = Size(
+                    width = size.width,
+                    height = size.height
+                ),
+                style = Stroke()
+            )
+
+            val spacePerHour = (size.width - spacing) / yPoints.size
+
+            val normX = mutableListOf<Float>()
+            val normY = mutableListOf<Float>()
+
+            val strokePath = Path().apply {
+
+                for (i in yPoints.indices) {
+
+                    val currentX = spacing + i * spacePerHour
+
+                    if (i == 0) {
+
+                        moveTo(currentX, yPoints[i])
+                    } else {
+
+                        val previousX = spacing + (i - 1) * spacePerHour
+
+                        val conX1 = (previousX + currentX) / 2f
+                        val conX2 = (previousX + currentX) / 2f
+
+                        val conY1 = yPoints[i - 1]
+                        val conY2 = yPoints[i]
+
+
+                        cubicTo(
+                            x1 = conX1,
+                            y1 = conY1,
+                            x2 = conX2,
+                            y2 = conY2,
+                            x3 = currentX,
+                            y3 = yPoints[i]
+                        )
+                    }
+
+                    // Circle dot points
+                    normX.add(currentX)
+                    normY.add(yPoints[i])
+
+                }
+            }
+
+
+            drawPath(
+                path = strokePath,
+                color = graphColor,
+                style = Stroke(
+                    width = 3.dp.toPx(),
+                    cap = StrokeCap.Round
+                )
+            )
+
+            (normX.indices).forEach {
+
+                clickable(onClick = xOnClick) {
+                    drawCircle(
+                        Color.Black,
+                        radius = 3.dp.toPx(),
+                        center = Offset(normX[it], normY[it])
+                    )
+                }
+
+            }
+        }
+    }
 }
 
 
