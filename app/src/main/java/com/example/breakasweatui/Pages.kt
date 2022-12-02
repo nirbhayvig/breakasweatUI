@@ -1,14 +1,26 @@
 package com.example.breakasweatui
 
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-
+import androidx.compose.ui.window.Popup
+import com.example.breakasweatui.ui.theme.*
 
 @Composable
 fun HomeScreen(
@@ -142,7 +154,10 @@ fun Completed(
 
 @Composable
 fun WorkoutHistory(
-    modifier: Modifier = Modifier, navHome: () -> Unit, openDrawer: () -> Unit, navBack: () -> Unit
+    modifier: Modifier = Modifier,
+    navHome: () -> Unit,
+    openDrawer: () -> Unit,
+    navBack: () -> Unit
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -154,6 +169,38 @@ fun WorkoutHistory(
         CustomText("Workout History")
         CustomElevatedButton(xText = "Home", xOnClick = navHome)
         CustomElevatedButton(xText = "Back", xOnClick = navBack)
+        var addNew by remember { mutableStateOf(false)}
+        val popupWidth = 300.dp
+        val popupHeight = 100.dp
+        CustomElevatedButton(
+            xText = "Add new", xOnClick = {
+                addNew = true
+            }, modifier = Modifier.padding(6.dp)
+        )
+        if(addNew) {
+            Popup(
+                onDismissRequest = { addNew = false },
+                alignment = Alignment.Center
+            ) {
+                Box(
+                    Modifier
+                        .size(popupWidth, popupHeight)
+                        .padding(top = 5.dp)
+                        .background(DarkColors.background)
+                        .border(BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(10.dp))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CustomText("popup")
+                    }
+                }
+            }
+        }
     }
 }
 
