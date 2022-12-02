@@ -364,6 +364,7 @@ fun SuperSimpleLineChart(
                     radius = 3.dp.toPx(),
                     center = Offset(normX[it], normY[it])
                 )
+
             }
         }
     }
@@ -441,7 +442,7 @@ fun Timer(
         // draw the timer
         Canvas(modifier = modifier) {
             // draw the inactive arc with following parameters
-            drawArc(
+            /*drawArc(
                 color = inactiveBarColor, // assign the color
                 startAngle = -215f, // assign the start angle
                 sweepAngle = 250f, // arc angles
@@ -474,7 +475,7 @@ fun Timer(
                 color = handleColor,
                 strokeWidth = (strokeWidth * 3f).toPx(),
                 cap = StrokeCap.Round  // make the pointer round
-            )
+            )*/
         }
         // add value of the timer
         Text(
@@ -495,7 +496,7 @@ fun Timer(
             }, modifier = Modifier.align(Alignment.BottomCenter),
             // change button color
             colors = ButtonDefaults.buttonColors(
-                Color.Green
+                MaterialTheme.colorScheme.secondary
             )
         ) {
             Text(
