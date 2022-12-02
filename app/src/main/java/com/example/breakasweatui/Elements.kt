@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.breakasweatui.ui.theme.BreakaSweatUITheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 
 
 data class Exercise(val name: String, val reps: Int?, val sets: Int?, val weight: Int?)
@@ -123,13 +126,6 @@ fun ExerciseButton(
     )
 }
 
-fun clickable(
-    onClick: (() -> Unit)? = null,
-    consumeDownOnStart: Boolean = false,
-    children: @Composable() () -> Unit
-) {
-
-}
 
 //point representation
 data class Point(val x: Float, val y: Float)
@@ -143,7 +139,6 @@ fun SuperSimpleLineChart(
     graphColor: Color = Color.Green,
     xOnClick: () -> Unit,
 ) {
-
     val spacing = 100f
     Box(
         modifier = Modifier
@@ -153,6 +148,7 @@ fun SuperSimpleLineChart(
             modifier = modifier
                 .fillMaxWidth()
                 .height(190.dp)
+
         ) {
             rotate(degrees = -90f, Offset(230f, 240f)) {
                 drawIntoCanvas { canvas ->
@@ -168,7 +164,7 @@ fun SuperSimpleLineChart(
             drawIntoCanvas { canvas ->
                 canvas.nativeCanvas.drawText(
                     "Date",
-                    775f, 205.dp.toPx(),
+                    440f, 205.dp.toPx(),
                     android.graphics.Paint().apply {
                         textSize = 40f
                     }
@@ -237,20 +233,18 @@ fun SuperSimpleLineChart(
                 )
             )
 
+
             (normX.indices).forEach {
-
-                clickable(onClick = xOnClick) {
-                    drawCircle(
-                        Color.Black,
-                        radius = 3.dp.toPx(),
-                        center = Offset(normX[it], normY[it])
-                    )
-                }
-
+                drawCircle(
+                    Color.Black,
+                    radius = 3.dp.toPx(),
+                    center = Offset(normX[it], normY[it])
+                )
             }
         }
     }
 }
+
 
 
 
