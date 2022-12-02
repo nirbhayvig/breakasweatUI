@@ -262,7 +262,7 @@ fun SuperSimpleLineChart(
     ),
     graphColor: Color = Color.Green
 ) {
-
+    val outColor = MaterialTheme.colorScheme.onBackground
     val spacing = 100f
     Box(
         modifier = Modifier
@@ -280,6 +280,7 @@ fun SuperSimpleLineChart(
                         0f, 0.dp.toPx(),
                         android.graphics.Paint().apply {
                             textSize = 40f
+                            color = outColor.toArgb()
                         }
                     )
                 }
@@ -290,12 +291,13 @@ fun SuperSimpleLineChart(
                     775f, 205.dp.toPx(),
                     android.graphics.Paint().apply {
                         textSize = 40f
+                        color = outColor.toArgb()
                     }
                 )
             }
 
             drawRect(
-                color = Color.Black,
+                color = outColor,
                 topLeft = Offset.Zero,
                 size = Size(
                     width = size.width,
@@ -358,7 +360,7 @@ fun SuperSimpleLineChart(
 
             (normX.indices).forEach {
                 drawCircle(
-                    Color.Black,
+                    outColor,
                     radius = 3.dp.toPx(),
                     center = Offset(normX[it], normY[it])
                 )
@@ -479,7 +481,7 @@ fun Timer(
             text = (currentTime / 1000L).toString(),
             fontSize = 44.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.onBackground
         )
         // create button to start or stop the timer
         Button(
