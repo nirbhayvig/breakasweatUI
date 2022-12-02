@@ -302,8 +302,8 @@ fun Resting(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
-            CustomText("Next Up:   ")
-            CustomText("Exercise 3")
+            CustomText("Resting")
+            //CustomText("Exercise 3")
         }
         Spacer(modifier = Modifier.height(24.dp))
         Row(
