@@ -41,7 +41,16 @@ class MainActivity : ComponentActivity() {
         val db = WorkoutDatabase.getInstance(applicationContext)
         val workoutDao = db.workoutDao()
         if (workoutDao.getAll().isEmpty()) {
-            workoutDao.insertAll(Workout(name = "INIT", sets = 3, reps = 10, weight = 15))
+            workoutDao.insertAll(
+                Workout(
+                    name = "INIT",
+                    sets = 3,
+                    reps = 10,
+                    weight = 15,
+                    isActive = true,
+                    isCompleted = false
+                )
+            )
         }
     }
 
@@ -61,7 +70,8 @@ class MainActivity : ComponentActivity() {
                     drawerState.open()
                 }
             }
-            NavigationDrawer(drawerState = drawerState,
+            NavigationDrawer(
+                drawerState = drawerState,
                 gesturesEnabled = drawerState.isOpen,
                 drawerContent = {
                     Drawer(onDestinationClicked = { route ->
@@ -83,14 +93,16 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("BeginningWorkout") {
                         BeginningWorkout(navDuring = { navController.navigate("DuringWorkout") },
-                            navBack = { navController.popBackStack() },
+                            navBack = { navController.navigate("Home") },
                             openDrawer = { openDrawer() })
                     }
                     composable("DuringWorkout") {
-                        DuringWorkout(navNext = {  },
+                        DuringWorkout(navNext = { navController.navigate("DuringWorkout") },
                             navResting = { navController.navigate("Resting") },
                             navBack = { navController.popBackStack() },
-                            openDrawer = { openDrawer() })
+                            openDrawer = { openDrawer() },
+                            navDone = { navController.navigate("CompletedWorkout") },
+                            navCancel = { navController.navigate("BeginningWorkout") })
                     }
                     composable("WorkoutHistory") {
                         WorkoutHistory(navHome = { navController.navigate("Home") },
@@ -103,10 +115,10 @@ class MainActivity : ComponentActivity() {
                             addNew = { navController.navigate("AddNew") },
                             update = { workout: Workout ->
                                 navController.navigate("update/${workout.uid}")
-                            } )
+                            })
                     }
                     composable("Resting") {
-                        Resting(navNext = { navController.navigate("CompletedWorkout") },
+                        Resting(navNext = { navController.navigate("DuringWorkout") },
                             navBack = { navController.popBackStack() },
                             openDrawer = { openDrawer() })
                     }
@@ -125,9 +137,8 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(
                         "update/{workoutId}",
-                        arguments = listOf(navArgument("workoutId") {type = NavType.IntType})
-                    ) {
-                        backStackEntry ->
+                        arguments = listOf(navArgument("workoutId") { type = NavType.IntType })
+                    ) { backStackEntry ->
                         UpdateWorkout(
                             navBack = { navController.navigate("ModifyRoutine") },
                             workout = workoutDao.findById(backStackEntry.arguments!!.getInt("workoutId"))

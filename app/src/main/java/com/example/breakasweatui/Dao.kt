@@ -14,6 +14,8 @@ data class Workout(
     @ColumnInfo(name = "reps") val reps: Int?,
     @ColumnInfo(name = "sets") val sets: Int?,
     @ColumnInfo(name = "weight") val weight: Int?,
+    @ColumnInfo(name = "isActive") var isActive: Boolean,
+    @ColumnInfo(name = "isCompleted") var isCompleted: Boolean
 )
 
 @Dao
