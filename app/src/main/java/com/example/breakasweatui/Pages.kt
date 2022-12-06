@@ -66,7 +66,7 @@ fun BeginningWorkout(
         resetToggle(exercises)
         CustomText(xText = "Begin Workout:")
         CustomText(xText = "Exercises for today:")
-        WorkoutViewList(exercises = exercises)
+        WorkoutViewList(exercises = exercises, buttonType = "Outlined")
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -100,19 +100,37 @@ fun DuringWorkout(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CustomText(xText = "DuringWorkout:")
         val workoutList = workoutDao.getAll()
         var exercises by remember { mutableStateOf(workoutList) }
         var activeWorkout by remember { mutableStateOf(getActive(exercises)!!) }
 
-
+        CustomText(xText = "Current Exercise:")
+        Box(
+            modifier = Modifier
+                .height(100.dp)
+                .width(275.dp), contentAlignment = Alignment.Center
+        ) {
+            WorkoutToggleButton(
+                exercise = activeWorkout,
+                color = ButtonDefaults.buttonColors(containerColor = Color(0xFFC5EBC3)),
+                modifier = Modifier
+                    .padding(vertical = 6.dp, horizontal = 5.dp)
+                    .width(250.dp)
+                    .height(100.dp),
+            )
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        CustomText(xText = "Today's routine:")
         LazyColumn(
             modifier = Modifier
                 .border(
                     BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
                 )
                 .height(300.dp)
-                .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
+                .width(225.dp)
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(exercises.size) { i ->
                 WorkoutToggleButton(exercise = exercises[i])
@@ -127,9 +145,9 @@ fun DuringWorkout(
         ) {
 
             CustomElevatedButton(xText = "Previous", xOnClick = {
-                if(isFirst(exercises, activeWorkout)){
+                if (isFirst(exercises, activeWorkout)) {
                     navCancel()
-                } else if (activeWorkout.name == "Resting"){
+                } else if (activeWorkout.name == "Resting") {
                     activeWorkout = decrementToggle(exercises, activeWorkout)!!
                     exercises = workoutDao.getAll()
                     navNext()
@@ -146,7 +164,7 @@ fun DuringWorkout(
             CustomElevatedButton(xText = "Next", xOnClick = {
                 exercises = workoutDao.getAll()
                 if (activeWorkout.name == "Resting") {
-                    if(isLast(exercises,activeWorkout)) {
+                    if (isLast(exercises, activeWorkout)) {
                         navDone()
                     } else {
                         activeWorkout = incrementToggle(exercises, activeWorkout)!!
@@ -180,6 +198,7 @@ fun isLast(
     }
     return index + 1 == exercises.size
 }
+
 fun isFirst(
     exercises: List<Workout>, currentActive: Workout
 ): Boolean {
@@ -275,7 +294,11 @@ fun decrementToggle(
 
 @Composable
 fun Resting(
-    navNext: () -> Unit, navBack: () -> Unit, navModify: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
+    navNext: () -> Unit,
+    navBack: () -> Unit,
+    navModify: () -> Unit,
+    openDrawer: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
