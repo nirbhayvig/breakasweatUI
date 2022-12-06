@@ -275,7 +275,7 @@ fun decrementToggle(
 
 @Composable
 fun Resting(
-    navNext: () -> Unit, navBack: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
+    navNext: () -> Unit, navBack: () -> Unit, navModify: () -> Unit, openDrawer: () -> Unit, modifier: Modifier = Modifier
 ) {
     NavBar(onButtonClicked = openDrawer)
 
@@ -303,9 +303,15 @@ fun Resting(
             horizontalArrangement = Arrangement.Center
         ) {
             CustomText("Resting")
-            //CustomText("Exercise 3")
         }
         Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomElevatedButton(xText = "Edit Exercise Values", xOnClick = navModify)
+        }
         Row(
             modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,
@@ -321,6 +327,7 @@ fun Resting(
 @Composable
 fun Completed(
     navHome: () -> Unit,
+    navModify: () -> Unit,
     navHistory: () -> Unit,
     openDrawer: () -> Unit,
     modifier: Modifier = Modifier
@@ -336,6 +343,7 @@ fun Completed(
         CustomText("Congrats! You completed a workout!")
         Spacer(modifier = Modifier.height(24.dp))
         CustomElevatedButton(xOnClick = navHome, xText = "Home")
+        CustomElevatedButton(xOnClick = navModify, xText = "Modify Exercises")
         CustomElevatedButton(xOnClick = navHistory, xText = "Workout History")
     }
 }
@@ -363,6 +371,7 @@ fun ModifyRoutine(
     // Edit Workout
     modifier: Modifier = Modifier,
     navHome: () -> Unit,
+    navBack: () -> Unit,
     openDrawer: () -> Unit,
     addNew: () -> Unit,
     update: (Workout) -> Unit
@@ -406,6 +415,7 @@ fun ModifyRoutine(
             }
         }, modifier = Modifier.padding(6.dp))
         CustomElevatedButton(xText = "Home", xOnClick = navHome, modifier = Modifier.padding(6.dp))
+        CustomElevatedButton(xText = "Back", xOnClick = navBack, modifier = Modifier.padding(6.dp))
     }
 }
 

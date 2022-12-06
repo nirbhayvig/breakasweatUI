@@ -111,6 +111,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("ModifyRoutine") {
                         ModifyRoutine(navHome = { navController.navigate("Home") },
+                            navBack = { navController.popBackStack() },
                             openDrawer = { openDrawer() },
                             addNew = { navController.navigate("AddNew") },
                             update = { workout: Workout ->
@@ -120,10 +121,12 @@ class MainActivity : ComponentActivity() {
                     composable("Resting") {
                         Resting(navNext = { navController.navigate("DuringWorkout") },
                             navBack = { navController.popBackStack() },
+                            navModify = { navController.navigate("ModifyRoutine") },
                             openDrawer = { openDrawer() })
                     }
                     composable("CompletedWorkout") {
                         Completed(navHome = { navController.navigate("Home") },
+                            navModify = { navController.navigate("ModifyRoutine") },
                             navHistory = { navController.navigate("WorkoutHistory") },
                             openDrawer = { openDrawer() })
                     }
