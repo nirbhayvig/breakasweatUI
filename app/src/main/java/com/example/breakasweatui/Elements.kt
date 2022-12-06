@@ -28,6 +28,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.onSizeChanged
@@ -64,6 +68,24 @@ fun CustomOutlinedButton(
 }
 
 @Composable
+fun CustomOutlinedButtonHeadline(
+    xText: String,
+    xOnClick: () -> Unit,
+    modifier: Modifier = Modifier.padding(vertical = 12.dp),
+    color: ButtonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
+) {
+    OutlinedButton(modifier = modifier, onClick = xOnClick, colors = color) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                xText,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+        }
+    }
+}
+
+@Composable
 fun CustomElevatedButtonWithSubtext(
     xText: String,
     xSubText: String,
@@ -76,13 +98,11 @@ fun CustomElevatedButtonWithSubtext(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                xText,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onTertiaryContainer
+                xText, color = MaterialTheme.colorScheme.onTertiaryContainer
             )
             Text(
                 xSubText,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onTertiaryContainer
             )
         }
@@ -103,12 +123,38 @@ fun CustomOutlinedButtonWithSubtext(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 xText,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onTertiaryContainer
             )
             Text(
                 xSubText,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+fun CustomOutlinedButtonWithHeadlineSubtext(
+    xText: String,
+    xSubText: String,
+    xOnClick: () -> Unit,
+    modifier: Modifier = Modifier.padding(vertical = 12.dp),
+    color: ButtonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiaryContainer)
+) {
+    OutlinedButton(
+        modifier = modifier, onClick = xOnClick, colors = color
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                xText,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+            Text(
+                xSubText,
+                style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onTertiaryContainer
             )
         }
@@ -125,7 +171,10 @@ fun CustomText(
 
 @Composable
 fun WorkoutEditList(
-    exercises: List<Workout>, modifier: Modifier = Modifier, update: (Workout) -> Unit
+    exercises: List<Workout>,
+    modifier: Modifier = Modifier,
+    update: (Workout) -> Unit,
+    deleted: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -133,10 +182,27 @@ fun WorkoutEditList(
                 BorderStroke(2.dp, color = Color.Gray), RoundedCornerShape(25.dp)
             )
             .height(300.dp)
-            .width(225.dp), horizontalAlignment = Alignment.CenterHorizontally
+            .width(300.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(exercises.size) { i ->
-            WorkoutUpdateButton(exercise = exercises[i], update)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = {
+                    update(exercises[i])
+                }) {
+                    Icon(
+                        Icons.Filled.Edit,
+                        contentDescription = "Delete",
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
+                }
+                WorkoutUpdateButton(exercise = exercises[i], update)
+                IconButton(onClick = {
+                    workoutDao.delete(exercises[i])
+                    deleted()
+                }) {
+                    Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                }
+            }
         }
     }
 }
@@ -152,7 +218,8 @@ fun WorkoutViewList(
             )
             .height(300.dp)
             .width(225.dp)
-            .padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally,
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(exercises.size) { i ->
             WorkoutViewButton(exercise = exercises[i], buttonType)
@@ -178,10 +245,7 @@ fun WorkoutToggleButton(
         "" + exercise.sets + "x" + exercise.reps + "@" + exercise.weight + "lbs"
     if (exercise.name == "Resting") {
         CustomOutlinedButton(
-            xText = exercise.name,
-            xOnClick = { },
-            modifier = modifier,
-            color = color
+            xText = exercise.name, xOnClick = { }, modifier = modifier, color = color
         )
     } else {
         CustomOutlinedButtonWithSubtext(
@@ -283,17 +347,14 @@ data class Point(val x: Float, val y: Float)
 
 @Composable
 fun SuperSimpleLineChart(
-    modifier: Modifier = Modifier,
-    yPoints: List<Float> = listOf(
+    modifier: Modifier = Modifier, yPoints: List<Float> = listOf(
         445f, 400f, 320f, 330f, 270f, 150f
-    ),
-    graphColor: Color = Color.Green
+    ), graphColor: Color = Color.Green
 ) {
     val outColor = MaterialTheme.colorScheme.onBackground
     val spacing = 100f
     Box(
-        modifier = Modifier
-            .padding(all = 20.dp)
+        modifier = Modifier.padding(all = 20.dp)
     ) {
         Canvas(
             modifier = modifier
@@ -302,35 +363,29 @@ fun SuperSimpleLineChart(
         ) {
             rotate(degrees = -90f, Offset(230f, 240f)) {
                 drawIntoCanvas { canvas ->
-                    canvas.nativeCanvas.drawText(
-                        "Max Set (Pounds * Reps)",
-                        0f, 0.dp.toPx(),
+                    canvas.nativeCanvas.drawText("Max Set (Pounds * Reps)",
+                        0f,
+                        0.dp.toPx(),
                         android.graphics.Paint().apply {
                             textSize = 40f
                             color = outColor.toArgb()
-                        }
-                    )
+                        })
                 }
             }
             drawIntoCanvas { canvas ->
-                canvas.nativeCanvas.drawText(
-                    "Date",
-                    775f, 205.dp.toPx(),
+                canvas.nativeCanvas.drawText("Date",
+                    775f,
+                    205.dp.toPx(),
                     android.graphics.Paint().apply {
                         textSize = 40f
                         color = outColor.toArgb()
-                    }
-                )
+                    })
             }
 
             drawRect(
-                color = outColor,
-                topLeft = Offset.Zero,
-                size = Size(
-                    width = size.width,
-                    height = size.height
-                ),
-                style = Stroke()
+                color = outColor, topLeft = Offset.Zero, size = Size(
+                    width = size.width, height = size.height
+                ), style = Stroke()
             )
 
             val spacePerHour = (size.width - spacing) / yPoints.size
@@ -377,19 +432,14 @@ fun SuperSimpleLineChart(
 
 
             drawPath(
-                path = strokePath,
-                color = graphColor,
-                style = Stroke(
-                    width = 3.dp.toPx(),
-                    cap = StrokeCap.Round
+                path = strokePath, color = graphColor, style = Stroke(
+                    width = 3.dp.toPx(), cap = StrokeCap.Round
                 )
             )
 
             (normX.indices).forEach {
                 drawCircle(
-                    outColor,
-                    radius = 3.dp.toPx(),
-                    center = Offset(normX[it], normY[it])
+                    outColor, radius = 3.dp.toPx(), center = Offset(normX[it], normY[it])
                 )
 
             }

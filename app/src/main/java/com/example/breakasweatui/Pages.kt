@@ -110,17 +110,43 @@ fun DuringWorkout(
                 .height(100.dp)
                 .width(275.dp), contentAlignment = Alignment.Center
         ) {
-            WorkoutToggleButton(
-                exercise = activeWorkout,
-                color = ButtonDefaults.buttonColors(containerColor = Color(0xFFC5EBC3)),
-                modifier = Modifier
-                    .padding(vertical = 6.dp, horizontal = 5.dp)
-                    .width(250.dp)
-                    .height(100.dp),
-            )
+            val exerciseSubText: String =
+                "" + activeWorkout.sets + "x" + activeWorkout.reps + "@" + activeWorkout.weight + "lbs"
+
+            if(activeWorkout.name == "Resting"){
+                CustomOutlinedButtonHeadline(
+                    activeWorkout.name,
+                    { },
+                    color = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                    modifier = Modifier
+                        .padding(vertical = 6.dp, horizontal = 5.dp)
+                        .width(250.dp)
+                        .height(100.dp)
+                )
+            } else {
+                CustomOutlinedButtonWithHeadlineSubtext(
+                    activeWorkout.name,
+                    exerciseSubText,
+                    { },
+                    color = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                    modifier = Modifier
+                        .padding(vertical = 6.dp, horizontal = 5.dp)
+                        .width(250.dp)
+                        .height(100.dp)
+                )
+
+            }
+//            WorkoutToggleButton(
+//                exercise = activeWorkout,
+//                color = ButtonDefaults.buttonColors(containerColor = Color(0xFFC5EBC3)),
+//                modifier = Modifier
+//                    .padding(vertical = 6.dp, horizontal = 5.dp)
+//                    .width(250.dp)
+//                    .height(100.dp),
+//            )
         }
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         CustomText(xText = "Today's routine:")
         LazyColumn(
             modifier = Modifier
@@ -409,7 +435,10 @@ fun ModifyRoutine(
         CustomText("Edit Workout Routine")
         val workoutList = workoutDao.getAll()
         var exercises by remember { mutableStateOf(workoutList) }
-        WorkoutEditList(exercises = exercises, update = update)
+        WorkoutEditList(
+            exercises = exercises,
+            update = update,
+            deleted = { exercises = workoutDao.getAll() })
 
         CustomElevatedButton(
             xText = "Add new workout", xOnClick = addNew, modifier = Modifier.padding(6.dp)
