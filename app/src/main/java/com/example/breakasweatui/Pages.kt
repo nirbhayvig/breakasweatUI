@@ -459,13 +459,7 @@ fun ModifyRoutine(
                 exercises = workoutDao.getAll()
             }, modifier = Modifier.padding(6.dp)
         )
-        CustomElevatedButton(xText = "Delete All", xOnClick = {
-            val workoutsToDelete = workoutDao.getAll()
-            for (workout in workoutsToDelete) {
-                workoutDao.delete(workout)
-                exercises = workoutDao.getAll()
-            }
-        }, modifier = Modifier.padding(6.dp))
+
         CustomElevatedButton(xText = "Home", xOnClick = navHome, modifier = Modifier.padding(6.dp))
         CustomElevatedButton(xText = "Back", xOnClick = navBack, modifier = Modifier.padding(6.dp))
     }
@@ -591,6 +585,7 @@ fun Settings(
     navBack: () -> Unit,
 ) {
     NavBar(onButtonClicked = openDrawer)
+    var isDeleted by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -598,7 +593,17 @@ fun Settings(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomText("Settings:")
-
+        if(!isDeleted) {
+            CustomElevatedButton(xText = "Delete All Workouts", xOnClick = {
+                val workoutsToDelete = workoutDao.getAll()
+                for (workout in workoutsToDelete) {
+                    workoutDao.delete(workout)
+                }
+                isDeleted = true
+            }, modifier = Modifier.padding(6.dp))
+        } else {
+            CustomText(xText = "All Exercises have been deleted!")
+        }
         CustomElevatedButton(xText = "Back", xOnClick = navBack)
         CustomElevatedButton(xText = "Home", xOnClick = navHome)
     }
